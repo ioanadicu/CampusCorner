@@ -1,6 +1,7 @@
 from enum import Enum
 import typing
 
+import requests
 import icalendar
 
 class Timeframe(Enum):
@@ -27,3 +28,12 @@ class CalendarApp:
     def __init__(self, calendars: typing.List[icalendar.Calendar]):
         self.timeframe = CalendarApp.DEFAULT_TIMEFRAME
         self.calendars = calendars
+
+    def add_calendar_from_url(self, url: str):
+        """
+        Add a calendar from an .ics link
+
+        :param url: `str` of the .ics link
+        """
+        request = requests.get(url)
+        self.calendars.append(icalendar.Calendar.from_ical(request.text))
