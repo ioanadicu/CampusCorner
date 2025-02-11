@@ -1,4 +1,7 @@
 from enum import Enum
+import typing
+
+import icalendar
 
 class Timeframe(Enum):
     """
@@ -21,6 +24,6 @@ class CalendarApp:
     """
     DEFAULT_TIMEFRAME = Timeframe.MONTH
 
-    def __init__(self):
+    def __init__(self, calendars: typing.List[icalendar.Calendar]):
         self.timeframe = CalendarApp.DEFAULT_TIMEFRAME
-
+        self.calendars = calendars
