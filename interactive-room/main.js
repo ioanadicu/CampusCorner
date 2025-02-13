@@ -21,19 +21,34 @@ controls.enableDamping = true;
 const loader = new THREE.GLTFLoader();
 let room; // Store the loaded room model
 
-loader.load('/interactive-room/room.glb', (gltf) => {
+loader.load('./room7.glb', (gltf) => {
     console.log("Model Loaded Successfully!", gltf.scene);
     room = gltf.scene;
     scene.add(room);
 
-    // Find monitor and door objects by name
-    const monitor = room.getObjectByName('monitor');
-    const door = room.getObjectByName('door');
+    // Traverse the loaded scene and log all object names
+    room.traverse((child) => {
+        if (child.isMesh) {
+            console.log("Object name:", child.name);
+        }
+    });
 
-    if (monitor && door) {
-        console.log('Monitor and door found!');
-    } else {
-        console.error('Monitor or door not found. Check object names in Blender.');
+    // Find monitor and door objects by name
+    const monitor = room.getObjectByName('Monitor');
+    const door = room.getObjectByName('Door');
+    const bed = room.getObjectByName('Bed')
+
+    if (monitor) {
+        console.log('Monitor found!');
+    } 
+    if (door) {
+        console.log("Door found")
+    }
+    if (bed) {
+        console.log("Bed found")
+    }
+    else {
+        console.error('Monitor or door or Bed not found. Check object names in Blender.');
     }
 }, undefined, (error) => {
     console.error("Error loading model:", error);
@@ -46,27 +61,75 @@ camera.lookAt(0, 0, 0);
 // Set up raycaster and mouse variables
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
-let highlightedObject = null;
 
-// Mouse movement event
+// Set up EffectComposer for post-processing
+const composer = new THREE.EffectComposer(renderer);
+const renderPass = new THREE.RenderPass(scene, camera);
+composer.addPass(renderPass);
+
+// Set up OutlinePass
+const outlinePass = new THREE.OutlinePass(
+    new THREE.Vector2(window.innerWidth, window.innerHeight),
+    scene,
+    camera
+);
+outlinePass.edgeStrength = 3.0;
+outlinePass.edgeGlow = 0.0;
+outlinePass.edgeThickness = 1.0;
+outlinePass.pulsePeriod = 0;
+outlinePass.visibleEdgeColor.set(0xffff99);
+outlinePass.hiddenEdgeColor.set(0x000000);
+composer.addPass(outlinePass);
+
+// To dynamically highlight objects
+let selectedObjects = [];
+
+function addSelectedObject(object) {
+    selectedObjects = [object];
+    outlinePass.selectedObjects = selectedObjects;
+}
+
+function clearSelectedObjects() {
+    selectedObjects = [];
+    outlinePass.selectedObjects = [];
+}
+
+// Mouse move event
 window.addEventListener('mousemove', (event) => {
+    // Calculate mouse position
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
+    // Update raycaster
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(scene.children, true);
 
+    const tooltip = document.getElementById('tooltip');
     if (intersects.length > 0) {
-        const object = intersects[0].object;
-        if (object.name === 'monitor' || object.name === 'door') {
-            highlightObject(object);
+        let object = intersects[0].object;
+
+        // Traverse up the hierarchy to find a meaningful parent name
+        while (object.parent && object.parent.type !== 'Scene') {
+            if (object.name) break; // Stop if the object has a name
+            object = object.parent;
+        }
+
+        // Display tooltip for any object with a name
+        if (object.name) {
+            tooltip.style.display = 'block';
+            tooltip.style.left = event.clientX + 10 + 'px'; // Offset from mouse
+            tooltip.style.top = event.clientY + 10 + 'px';
+            tooltip.textContent = object.name; // Show object's name
         } else {
-            removeHighlight();
+            tooltip.style.display = 'none'; // Hide tooltip if no meaningful name
         }
     } else {
-        removeHighlight();
+        tooltip.style.display = 'none'; // Hide tooltip if no object is hovered
     }
 });
+
+
+
 
 // Mouse click event
 window.addEventListener('click', (event) => {
@@ -78,36 +141,31 @@ window.addEventListener('click', (event) => {
 
     if (intersects.length > 0) {
         const object = intersects[0].object;
-        if (object.name === 'monitor') {
-            alert('You clicked the monitor!');
-        } else if (object.name === 'door') {
-            alert('You clicked the door!');
+
+        if (object.name === 'Monitor') {
+            console.log('You clicked the monitor!');
+            addSelectedObject(object);
+        } else if (object.name === 'Door') {
+            console.log('You clicked the door!');
+            addSelectedObject(object);
         }
+        else if (object.name === 'Calendar') {
+            console.log('You clicked the Calendar!');
+            addSelectedObject(object); // 
+        }
+        else if (object.name === 'Bed') {
+            console.log('You clicked the Bed!');
+            addSelectedObject(object); // 
+        }
+        else {
+        clearSelectedObjects();
     }
-});
-
-// Highlight function
-function highlightObject(object) {
-    if (highlightedObject !== object) {
-        removeHighlight();
-        object.originalMaterial = object.material;
-        object.material = new THREE.MeshBasicMaterial({ color: 0xff0000 }); // Red highlight
-        highlightedObject = object;
-    }
-}
-
-// Remove highlight function
-function removeHighlight() {
-    if (highlightedObject) {
-        highlightedObject.material = highlightedObject.originalMaterial;
-        highlightedObject = null;
-    }
-}
+}});
 
 // Render loop
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
-    renderer.render(scene, camera);
+    composer.render(); // Use composer for post-processing
 }
 animate();
