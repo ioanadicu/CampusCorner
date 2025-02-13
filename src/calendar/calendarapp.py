@@ -1,5 +1,6 @@
 from enum import Enum
 import typing
+from pathlib import Path
 
 import requests
 import icalendar
@@ -36,4 +37,16 @@ class CalendarApp:
         :param url: `str` of the .ics link
         """
         request = requests.get(url)
-        self.calendars.append(icalendar.Calendar.from_ical(request.text))
+        self.add_calendar(icalendar.Calendar.from_ical(request.text))
+
+    def add_calendar_from_file(self, fp: str):
+        """
+        Add a calendar from a file
+
+        :param fp: `str` of the filepath
+        """
+        ics_path = Path(fp)
+        self.add_calendar(icalendar.Calendar.from_ical(ics_path.read_bytes()))
+
+    def add_calendar(self, calendar: icalendar.Calendar):
+        self.calendars.append(calendar)
