@@ -1,7 +1,7 @@
 import uuid
 import time
-from flask import Flask, session, request, redirect, render_template
-import requests
+from flask import Flask, session, request, redirect, render_template, url_for
+
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'  # Replace with your actual secret key
@@ -48,19 +48,23 @@ def register():
     print('csticket: ', csticket)
     url = get_authentication_url("validate")
     print(url)
+    print('redirect to UoM login')
     return redirect(url)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        #add check of username and password
+    username = request.form['username']
+    password = request.form['password']
+    print('Got username and password: ', username, password)
+    if len(username)>0:
+        print('Got username and password: ', username, password)
+            #add check of username and password
         if username in list(users.keys()):
             if password == users[username][0]:
+                print('correct creds!')
                 fullname = users[username][1]
-                return show_page(username, fullname)
+                return redirect(url_for('show_page', username = username, fullname = fullname))
         return f'Incorrect credentials !'
 
 
@@ -69,10 +73,11 @@ def login():
 def validate_new_user():
     username = get_username()
     fullname = request.args.get('fullname')
-    print(username, fullname)
+    print('Got username and fullname from UoM', username, fullname)
     if not is_csticket_matching_session():
         return f'Incorrect credentials !'
     if username not in list(users.keys()):
+        print('This is a new usr, so create a password')
         return render_template('register.html', username = username, fullname = fullname)
     return render_template('index.html')
 
@@ -83,11 +88,13 @@ def save_new_user(username):
         password = request.form['password']
         fullname = request.form['fullname']
         users[username] = [password, fullname]
-        return show_page(username, fullname)
+        print('Saving new user with creds', username, password)
+        return redirect(url_for('show_page', username = username, fullname = fullname))
 
-@app.route('/user/<username>')
-def show_page(username, fullname):
-    print(users)
+@app.route('/user/<username>', methods=['GET'])
+def show_page(username):
+    fullname = request.args.get('fullname')
+    print('This is a page for user', fullname)
     return f'Hello {fullname} !'
 
 
