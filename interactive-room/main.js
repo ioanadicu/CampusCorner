@@ -16,6 +16,21 @@ scene.add(pointLight);
 // Orbit controls
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
+controls.target.set(0, 0, 0);  // Ensure the target is the center of the scene (room's center)
+controls.update();  // Update controls to reflect the change
+
+
+// Set zoom limits
+controls.minDistance = 8;  // Minimum zoom-in
+controls.maxDistance = 30; // Maximum zoom-out
+
+// Prevent camera from going below floor level
+controls.addEventListener('change', () => {
+    if (camera.position.y < 1) { // Floor level at y = 1
+        camera.position.y = 1;
+    }
+});
+
 
 // Load the room model
 const loader = new THREE.GLTFLoader();
@@ -33,22 +48,17 @@ loader.load('./room7.glb', (gltf) => {
         }
     });
 
-    // Find monitor and door objects by name
+    // Find monitor, door, and calendar objects by name
     const monitor = room.getObjectByName('Monitor');
     const door = room.getObjectByName('Door');
-    const bed = room.getObjectByName('Bed')
+    const calendar = room.getObjectByName('Calendar');
 
-    if (monitor) {
-        console.log('Monitor found!');
-    } 
-    if (door) {
-        console.log("Door found")
-    }
-    if (bed) {
-        console.log("Bed found")
-    }
-    else {
-        console.error('Monitor or door or Bed not found. Check object names in Blender.');
+    if (monitor) console.log('Monitor found!');
+    if (door) console.log('Door found!');
+    if (calendar) console.log('Calendar found!');
+
+    if (!monitor || !door || !calendar) {
+        console.error('One or more objects not found. Check object names in Blender.');
     }
 }, undefined, (error) => {
     console.error("Error loading model:", error);
@@ -73,28 +83,25 @@ const outlinePass = new THREE.OutlinePass(
     scene,
     camera
 );
-outlinePass.edgeStrength = 3.0;
+outlinePass.edgeStrength = 5.0;
 outlinePass.edgeGlow = 0.0;
-outlinePass.edgeThickness = 1.0;
-outlinePass.pulsePeriod = 0;
+outlinePass.edgeThickness = 3.0;
+outlinePass.pulsePeriod = 2;
 outlinePass.visibleEdgeColor.set(0xffff99);
-outlinePass.hiddenEdgeColor.set(0x000000);
+outlinePass.hiddenEdgeColor.set(0xffff99);
+
+
 composer.addPass(outlinePass);
 
 // To dynamically highlight objects
 let selectedObjects = [];
 
-function addSelectedObject(object) {
-    selectedObjects = [object];
+function setHighlightedObject(object) {
+    selectedObjects = object ? [object] : [];
     outlinePass.selectedObjects = selectedObjects;
 }
 
-function clearSelectedObjects() {
-    selectedObjects = [];
-    outlinePass.selectedObjects = [];
-}
-
-// Mouse move event
+// Mouse move event for hover highlighting
 window.addEventListener('mousemove', (event) => {
     // Calculate mouse position
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -110,57 +117,27 @@ window.addEventListener('mousemove', (event) => {
 
         // Traverse up the hierarchy to find a meaningful parent name
         while (object.parent && object.parent.type !== 'Scene') {
-            if (object.name) break; // Stop if the object has a name
+            if (object.name) break;
             object = object.parent;
         }
 
-        // Display tooltip for any object with a name
-        if (object.name) {
+        // Display tooltip and apply highlighting
+        if (['Monitor', 'Door', 'Calendar'].includes(object.name)) {
             tooltip.style.display = 'block';
             tooltip.style.left = event.clientX + 10 + 'px'; // Offset from mouse
             tooltip.style.top = event.clientY + 10 + 'px';
-            tooltip.textContent = object.name; // Show object's name
+            tooltip.textContent = object.name;
+
+            setHighlightedObject(object);
         } else {
-            tooltip.style.display = 'none'; // Hide tooltip if no meaningful name
+            tooltip.style.display = 'none';
+            setHighlightedObject(null);
         }
     } else {
-        tooltip.style.display = 'none'; // Hide tooltip if no object is hovered
+        tooltip.style.display = 'none';
+        setHighlightedObject(null);
     }
 });
-
-
-
-
-// Mouse click event
-window.addEventListener('click', (event) => {
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(scene.children, true);
-
-    if (intersects.length > 0) {
-        const object = intersects[0].object;
-
-        if (object.name === 'Monitor') {
-            console.log('You clicked the monitor!');
-            addSelectedObject(object);
-        } else if (object.name === 'Door') {
-            console.log('You clicked the door!');
-            addSelectedObject(object);
-        }
-        else if (object.name === 'Calendar') {
-            console.log('You clicked the Calendar!');
-            addSelectedObject(object); // 
-        }
-        else if (object.name === 'Bed') {
-            console.log('You clicked the Bed!');
-            addSelectedObject(object); // 
-        }
-        else {
-        clearSelectedObjects();
-    }
-}});
 
 // Render loop
 function animate() {
