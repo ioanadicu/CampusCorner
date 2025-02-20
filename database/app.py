@@ -3,6 +3,7 @@ from config import Config
 from models import db, User
 from routes import routes
 import json
+import random
 
 import uuid
 import time
@@ -102,8 +103,9 @@ def save_new_user(username):
     if request.method == 'POST':
         password = request.form['password']
         fullname = request.form['fullname']
-
-        new_user = User(user_id = 1,
+        
+        userID = random.randint(100000,999999)
+        new_user = User(user_id = userID,
                         username = username,
                         password = password,
                         full_name = fullname   
