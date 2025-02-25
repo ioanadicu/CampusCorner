@@ -1,44 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
 <head>
   <meta charset="UTF-8"> 
   <title>Task Manager with Reminders</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 
-
 <body>
-  <div class="container">
 
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <h2>Categories</h2>
-      <!-- Fixed Categories -->
-      <div class="category" data-category="today">Today</div>
-      <div class="category" data-category="upcoming">Upcoming</div>
-      
-      <!-- Custom Categories Section -->
-      <div class="custom-categories">
-        <h3>
-          Categories
-          <span id="add-category-btn">+</span>
-        </h3>
-        <div id="custom-category-list">
-          <!-- Custom categories appended here -->
-        </div>
+  <!-- Button to Open To-Do List -->
+  <button id="open-todo">Open To-Do List</button>
+
+  <!-- To-Do List Modal (Initially Hidden) -->
+  <div id="todo-container">
+    <div class="todo-content">
+      <span id="close-todo">&times;</span> <!-- Close button -->
+
+      <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+          <h2>Categories</h2>
+          <!-- Fixed Categories -->
+          <div class="category" data-category="today">Today</div>
+          <div class="category" data-category="upcoming">Upcoming</div>
+          
+          <!-- Custom Categories Section -->
+          <div class="custom-categories">
+            <h3>
+              Categories
+              <span id="add-category-btn">+</span>
+            </h3>
+            <div id="custom-category-list">
+              <!-- Custom categories appended here -->
+            </div>
+          </div>
+        </aside>
+        
+        <!-- Main Content Area -->
+        <main class="content" id="content">
+          <h1>Welcome!</h1>
+          <p>Select a category from the left to see its tasks.</p>
+        </main>
       </div>
-    </aside>
-    
-    <!-- Main Content Area -->
-    <main class="content" id="content">
-      <h1>Welcome!</h1>
-      <p>Select a category from the left to see its tasks.</p>
-    </main>
-    
+
+    </div>
   </div>
 
   <script src="script.js"></script>
 </body>
+
 </html>

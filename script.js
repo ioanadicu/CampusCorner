@@ -13,6 +13,19 @@ document.addEventListener("DOMContentLoaded", function () {
         return `${yyyy}-${mm}-${dd}`;
     }
 
+    /*************** Show & Hide To-Do List Modal ***************/
+    const openTodoBtn = document.getElementById("open-todo");
+    const todoContainer = document.getElementById("todo-container");
+    const closeTodoBtn = document.getElementById("close-todo");
+
+    openTodoBtn.addEventListener("click", function () {
+        todoContainer.style.display = "block";
+    });
+
+    closeTodoBtn.addEventListener("click", function () {
+        todoContainer.style.display = "none";
+    });
+
     function getFilteredTasks(key) {
         const todayStr = getTodayStr();
         if (key === "today") {
@@ -33,29 +46,28 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    /*************** Attach Event Listeners to Initial Categories ***************/
     document.querySelectorAll(".category").forEach(attachCategoryClick);
 
-    /*************** Add Category Button Logic ***************/
     document.getElementById("add-category-btn").addEventListener("click", function () {
         const newCategoryName = prompt("Enter new category name:");
         if (newCategoryName) {
             const key = newCategoryName.trim().toLowerCase().replace(/\s+/g, "-");
 
-            // Check if category already exists
             if (document.querySelector(`[data-category="${key}"]`)) {
                 alert("Category already exists!");
                 return;
             }
 
-            // Create new category element
             const newCatElem = document.createElement("div");
             newCatElem.className = "category";
             newCatElem.setAttribute("data-category", key);
             newCatElem.textContent = newCategoryName;
 
-            attachCategoryClick(newCatElem); // Attach click event to new category
+            attachCategoryClick(newCatElem);
             document.getElementById("custom-category-list").appendChild(newCatElem);
+            
+            // Update the content to reflect the newly created category
+            updateContent(key, newCategoryName);
         }
     });
 
@@ -85,13 +97,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         html += `</ul>`;
 
+        // Only add the "New Task" button for custom categories
         if (key !== "today" && key !== "upcoming") {
             html += `<button id="new-task-button">New Task</button>`;
         }
 
         content.innerHTML = html;
-
         attachTaskDeletionHandlers();
+        
         if (key !== "today" && key !== "upcoming") {
             attachNewTaskButtonHandler(displayName);
         }
