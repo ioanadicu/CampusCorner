@@ -1,5 +1,7 @@
 import datetime
 import calendar
+import typing
+import icalendar
 
 import calendarapp
 import maths_helpers
@@ -56,6 +58,40 @@ class CalendarRenderer:
             return 1
         else:
             raise ValueError(self._timeframe_valueerror_txt())
+    
+    def _get_months_events(self) -> typing.List[icalendar.Event]:
+        events = []
+        for cal in self.app.calendars:
+            for event in cal.events:
+                pass
+            # TODO
+
+    def render_table(self) -> str:
+        """
+        Return a string of the Calendar table
+        """
+        # a string that goes between <table></table> tags
+        rows = ""
+
+        # add header
+        if self.app.timeframe in (calendarapp.Timeframe.MONTH, calendarapp.Timeframe.WEEK):
+            rows += """<tr>
+    <th>Mon</th>
+    <th>Tue</th>
+    <th>Wed</th>
+    <th>Thu</th>
+    <th>Fri</th>
+    <th>Sat</th>
+    <th>Sun</th>
+</tr>"""
+        elif self.app.timeframe is calendarapp.Timeframe.DAY:
+            rows += f"<tr><th>{datetime.datetime.now().day}</th></tr>"
+
+        for row in range(self._calc_rows_needed()):
+            # a string that goes betweem <tr></tr> tags
+            cells = ""
+            for column in range(self._get_columns_needed()):
+                pass
 
     def render(self):
         return ""  # TODO
