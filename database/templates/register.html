@@ -5,7 +5,7 @@
     
 </head>
 <body>
-   <form action = "{{ url_for('save_new_user', username = username) }}" method = "post">
+   <form action = "{{ url_for('auth.save_new_user', username = username) }}" method = "post">
     <div class="login-container">
         <h2>{{fullname}}, Create a new Password</h2>
         <input type="password" id="password", name = 'password' placeholder="Password" required>

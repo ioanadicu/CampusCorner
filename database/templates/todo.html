@@ -2,55 +2,39 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Task & Event Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Manager</title>
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='styles.css') }}"
+      href="{{ url_for('static', filename='todo_styles.css') }}"
     />
   </head>
   <body>
-    <h1>Task & Event Manager</h1>
-    <label for="userSelect">Select User:</label>
-    <select id="userSelect" onchange="loadData()">
-      <option value="1">User 1 (John Doe)</option>
-      <option value="2">User 2 (Jane Smith)</option>
-      <option value="3">User 3 (Bob Jones)</option>
-    </select>
+    <div class="container">
+      <h1>Your To-Do List</h1>
 
-    <h2>To-Do List</h2>
-    <ul id="todoList"></ul>
+      <ul id="todoList"></ul>
 
-    <input type="text" id="newTask" placeholder="Enter new task" />
-    <select id="taskPriority">
-      <option value="Low">Low</option>
-      <option value="Medium" selected>Medium</option>
-      <option value="High">High</option>
-    </select>
-    <input type="date" id="taskDueDate" />
-    <button onclick="addTask()">Add Task</button>
-
-    <h2>Calendar Events</h2>
-    <ul id="eventList"></ul>
-
-    <input type="text" id="newEventTitle" placeholder="Event Title" />
-    <input
-      type="text"
-      id="newEventDescription"
-      placeholder="Description (optional)"
-    />
-    <input type="datetime-local" id="newEventStart" />
-    <input type="datetime-local" id="newEventEnd" />
-    <button onclick="addEvent()">Add Event</button>
+      <div class="add-task-form">
+        <input type="text" id="newTask" placeholder="Enter new task" />
+        <select id="taskPriority">
+          <option value="Low">Low</option>
+          <option value="Medium" selected>Medium</option>
+          <option value="High">High</option>
+        </select>
+        <input type="date" id="taskDueDate" />
+        <button onclick="addTask()">Add Task</button>
+      </div>
+    </div>
 
     <script>
       async function loadData() {
-        const userId = document.getElementById("userSelect").value;
-
-        // Load To-Do List
-        let response = await fetch(`/todo/${userId}`);
+        let response = await fetch(`/todo/tasks`);
         let tasks = await response.json();
+
         let todoList = document.getElementById("todoList");
         todoList.innerHTML = "";
+
         tasks.forEach((task) => {
           let li = document.createElement("li");
           li.classList.toggle("completed", task.is_completed);
@@ -60,53 +44,27 @@
           checkbox.checked = task.is_completed;
           checkbox.onclick = () =>
             toggleTaskCompletion(task.task_id, task.is_completed);
+          checkbox.classList.add("task-checkbox");
 
-          let text = document.createTextNode(
-            ` ${task.task} (Priority: ${task.priority}, Due: ${
-              task.due_date || "No due date"
-            })`
-          );
-
-          let editBtn = document.createElement("button");
-          editBtn.innerText = "Edit";
-          editBtn.onclick = () =>
-            editTask(task.task_id, task.task, task.priority, task.due_date);
+          let taskText = document.createElement("span");
+          taskText.innerText = `${task.task} (Priority: ${
+            task.priority
+          }, Due: ${task.due_date || "No due date"})`;
+          taskText.classList.add("task-text");
 
           let deleteBtn = document.createElement("button");
-          deleteBtn.innerText = "Delete";
+          deleteBtn.innerHTML = "🗑️";
           deleteBtn.onclick = () => deleteTask(task.task_id);
+          deleteBtn.classList.add("delete-btn");
 
           li.appendChild(checkbox);
-          li.appendChild(text);
-          li.appendChild(editBtn);
+          li.appendChild(taskText);
           li.appendChild(deleteBtn);
           todoList.appendChild(li);
-        });
-
-        // Load Calendar Events
-        response = await fetch(`/calendar/${userId}`);
-        let events = await response.json();
-        let eventList = document.getElementById("eventList");
-        eventList.innerHTML = "";
-        events.forEach((event) => {
-          let li = document.createElement("li");
-          li.innerHTML = `<strong>${event.title}</strong> (${
-            event.start_time
-          } - ${event.end_time}) - ${event.description || "No description"} 
-                    <button onclick="editEvent(${event.event_id}, '${
-            event.title
-          }', '${event.description}', '${event.start_time}', '${
-            event.end_time
-          }')">Edit</button>
-                    <button onclick="deleteEvent(${
-                      event.event_id
-                    })">Delete</button>`;
-          eventList.appendChild(li);
         });
       }
 
       async function addTask() {
-        const userId = document.getElementById("userSelect").value;
         const taskText = document.getElementById("newTask").value;
         const priority = document.getElementById("taskPriority").value;
         const dueDate = document.getElementById("taskDueDate").value || null;
@@ -117,7 +75,6 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            user_id: userId,
             task: taskText,
             priority: priority,
             due_date: dueDate,
@@ -136,57 +93,8 @@
         loadData();
       }
 
-      async function editTask(taskId, oldTask, oldPriority, oldDueDate) {
-        const newTask = prompt("Edit Task:", oldTask);
-        if (!newTask) return;
-
-        const newPriority = prompt(
-          "Edit Priority (Low, Medium, High):",
-          oldPriority
-        );
-        if (!newPriority) return;
-
-        const newDueDate = prompt(
-          "Edit Due Date (YYYY-MM-DD):",
-          oldDueDate || ""
-        );
-
-        await fetch(`/todo/${taskId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            task: newTask,
-            priority: newPriority,
-            due_date: newDueDate,
-          }),
-        });
-        loadData();
-      }
-
-      async function editEvent(eventId, oldTitle, oldDesc, oldStart, oldEnd) {
-        const newTitle = prompt("Edit Event Title:", oldTitle);
-        const newDesc = prompt("Edit Event Description:", oldDesc);
-        const newStart = prompt(
-          "Edit Start Time (YYYY-MM-DD HH:MM:SS):",
-          oldStart
-        );
-        const newEnd = prompt("Edit End Time (YYYY-MM-DD HH:MM:SS):", oldEnd);
-
-        await fetch(`/calendar/${eventId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            title: newTitle,
-            description: newDesc,
-            start_time: newStart,
-            end_time: newEnd,
-          }),
-        });
-        loadData();
-      }
-
-      async function deleteEvent(eventId) {
-        await fetch(`/calendar/${eventId}`, { method: "DELETE" });
+      async function deleteTask(taskId) {
+        await fetch(`/todo/${taskId}`, { method: "DELETE" });
         loadData();
       }
 
