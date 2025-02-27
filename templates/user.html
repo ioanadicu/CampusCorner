@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='overlay.css') }}">
+    
+</head>
+<body>
+    <h2>Welcome, {{fullname}}</h2>
+<!-- Button to open the panel -->
+<button id="showPanelButton">Show Panel</button>
+
+<!-- The background overlay -->
+<div id="overlay"></div>
+
+<!-- Container where the panel HTML will be injected -->
+<div id="panelContainer"></div>
+
+<script>
+    // Get elements
+    const showPanelButton = document.getElementById('showPanelButton');
+    const panelContainer = document.getElementById('panelContainer');
+    const overlay = document.getElementById('overlay');
+
+    // Show the panel when the button is clicked
+    showPanelButton.addEventListener('click', function() {
+        // Fetch the panel HTML from the Flask route
+        fetch('/user/<username>/monitor')
+            .then(response => response.text())
+            .then(data => {
+                // Inject the panel content into the container
+                panelContainer.innerHTML = data;
+
+                // Show the panel and the overlay
+                const popupPanel = document.getElementById('popupPanel');
+                const closePanelButton = document.getElementById('closePanelButton');
+
+                popupPanel.style.display = 'block';
+                overlay.style.display = 'block';
+
+                // Close the panel when the close button is clicked
+                closePanelButton.addEventListener('click', function() {
+                    popupPanel.style.display = 'none';
+                    overlay.style.display = 'none';
+                });
+
+                // Close the panel when the overlay is clicked
+                overlay.addEventListener('click', function() {
+                    popupPanel.style.display = 'none';
+                    overlay.style.display = 'none';
+                });
+            })
+            .catch(error => {
+                console.error('Error loading panel:', error);
+            });
+    });
+</script>
+
+</body>
+</html>

@@ -95,7 +95,11 @@ def save_new_user(username):
 def show_page(username):
     fullname = request.args.get('fullname')
     print('This is a page for user', fullname)
-    return f'Hello {fullname} !'
+    return render_template('user.html', fullname = fullname, username=username)
+
+@app.route('/user/<username>/monitor')
+def show_monitor(username):
+    return render_template('monitor.html')
 
 
 
