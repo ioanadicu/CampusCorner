@@ -10,9 +10,10 @@
     />
   </head>
   <body>
+    <button id="backButton">Home</button>
+
     <div class="container">
       <h1>Your To-Do List</h1>
-
       <ul id="todoList"></ul>
 
       <div class="add-task-form">
@@ -28,76 +29,114 @@
     </div>
 
     <script>
-      async function loadData() {
-        let response = await fetch(`/todo/tasks`);
-        let tasks = await response.json();
-
-        let todoList = document.getElementById("todoList");
-        todoList.innerHTML = "";
-
-        tasks.forEach((task) => {
-          let li = document.createElement("li");
-          li.classList.toggle("completed", task.is_completed);
-
-          let checkbox = document.createElement("input");
-          checkbox.type = "checkbox";
-          checkbox.checked = task.is_completed;
-          checkbox.onclick = () =>
-            toggleTaskCompletion(task.task_id, task.is_completed);
-          checkbox.classList.add("task-checkbox");
-
-          let taskText = document.createElement("span");
-          taskText.innerText = `${task.task} (Priority: ${
-            task.priority
-          }, Due: ${task.due_date || "No due date"})`;
-          taskText.classList.add("task-text");
-
-          let deleteBtn = document.createElement("button");
-          deleteBtn.innerHTML = "🗑️";
-          deleteBtn.onclick = () => deleteTask(task.task_id);
-          deleteBtn.classList.add("delete-btn");
-
-          li.appendChild(checkbox);
-          li.appendChild(taskText);
-          li.appendChild(deleteBtn);
-          todoList.appendChild(li);
+      // Back button event listener
+      document
+        .getElementById("backButton")
+        .addEventListener("click", function () {
+          window.history.back();
         });
+
+      // Function to load tasks from the server
+      async function loadData() {
+        try {
+          let response = await fetch(`/todo/tasks`);
+          if (!response.ok) {
+            console.error("Error fetching tasks:", response.statusText);
+            return;
+          }
+          let tasks = await response.json();
+          let todoList = document.getElementById("todoList");
+          todoList.innerHTML = "";
+
+          tasks.forEach((task) => {
+            let li = document.createElement("li");
+            li.classList.toggle("completed", task.is_completed);
+
+            let checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = task.is_completed;
+            checkbox.onclick = () =>
+              toggleTaskCompletion(task.task_id, task.is_completed);
+            checkbox.classList.add("task-checkbox");
+
+            let taskText = document.createElement("span");
+            taskText.innerText = `${task.task} (Priority: ${
+              task.priority
+            }, Due: ${task.due_date || "No due date"})`;
+            taskText.classList.add("task-text");
+
+            let deleteBtn = document.createElement("button");
+            deleteBtn.innerHTML = "🗑️";
+            deleteBtn.onclick = () => deleteTask(task.task_id);
+            deleteBtn.classList.add("delete-btn");
+
+            li.appendChild(checkbox);
+            li.appendChild(taskText);
+            li.appendChild(deleteBtn);
+            todoList.appendChild(li);
+          });
+        } catch (error) {
+          console.error("Error in loadData:", error);
+        }
       }
 
+      // Function to add a new task
       async function addTask() {
         const taskText = document.getElementById("newTask").value;
         const priority = document.getElementById("taskPriority").value;
         const dueDate = document.getElementById("taskDueDate").value || null;
 
-        if (!taskText) return alert("Task cannot be empty!");
+        if (!taskText) {
+          alert("Task cannot be empty!");
+          return;
+        }
 
-        await fetch("/todo", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            task: taskText,
-            priority: priority,
-            due_date: dueDate,
-          }),
-        });
-        document.getElementById("newTask").value = "";
-        loadData();
+        try {
+          let response = await fetch("/todo", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              task: taskText,
+              priority: priority,
+              due_date: dueDate,
+            }),
+          });
+          if (!response.ok) {
+            console.error("Error adding task:", response.statusText);
+          } else {
+            document.getElementById("newTask").value = "";
+            loadData();
+          }
+        } catch (error) {
+          console.error("Error in addTask:", error);
+        }
       }
 
+      // Function to toggle task completion status
       async function toggleTaskCompletion(taskId, isCompleted) {
-        await fetch(`/todo/complete/${taskId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ is_completed: !isCompleted }),
-        });
-        loadData();
+        try {
+          await fetch(`/todo/complete/${taskId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ is_completed: !isCompleted }),
+          });
+          loadData();
+        } catch (error) {
+          console.error("Error in toggleTaskCompletion:", error);
+        }
       }
 
+      // Function to delete a task
       async function deleteTask(taskId) {
-        await fetch(`/todo/${taskId}`, { method: "DELETE" });
-        loadData();
+        try {
+          await fetch(`/todo/${taskId}`, { method: "DELETE" });
+          loadData();
+        } catch (error) {
+          console.error("Error in deleteTask:", error);
+        }
       }
 
+      // Load tasks when the window loads
       window.onload = loadData;
     </script>
   </body>

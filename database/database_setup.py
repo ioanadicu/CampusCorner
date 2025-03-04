@@ -18,8 +18,7 @@ with app.app_context():
         user_id=1,  # Manually setting user_id (auto-incrementing continues from here)
         username="c7f437",
         password="123",  
-        first_name="Mohammed",
-        last_name="Raja",
+        fullname = "Mohammed Raja ",
         role_id=None  
     )
 

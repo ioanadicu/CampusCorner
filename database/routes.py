@@ -28,6 +28,7 @@ def todo_page():
 @login_required
 def get_todo_tasks():
     user_id = session.get("user_id")
+    print("User ID for fetching tasks:", user_id)  # Debug print
     if not user_id:
         return jsonify({"error": "Unauthorized"}), 401
 

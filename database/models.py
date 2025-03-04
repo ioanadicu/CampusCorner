@@ -12,10 +12,8 @@ class User(db.Model):
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # Auto-incrementing ID
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)  # Storing as plain text for now
-    first_name = db.Column(db.String(50), nullable=False)
-    last_name = db.Column(db.String(50), nullable=False)
+    fullname = db.Column(db.String(50), nullable=False)
     role_id = db.Column(db.Integer, nullable=True)  
-
   
     tasks = db.relationship('ToDo', backref='user', lazy=True, foreign_keys='ToDo.user_id')
     events = db.relationship('CalendarEvent', backref='user', lazy=True)

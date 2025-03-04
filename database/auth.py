@@ -45,15 +45,11 @@ def save_new_user(username):
     password = request.form['password']
     fullname = request.form['fullname']
     
-    name_parts = fullname.strip().split(" ",1)
-    first_name = name_parts[0]
-    last_name = name_parts[1] if len(name_parts) > 1 else ""
 
     new_user = User(
         username=username,
         password=password,
-        first_name=first_name,
-        last_name= last_name)
+        fullname=fullname)
 
     db.session.add(new_user)
     db.session.commit()
@@ -67,14 +63,27 @@ def login():
         password = request.form['password']
 
         user = User.query.filter_by(username=username, password=password).first()
-
+        
         if user:
             session['user_id'] = user.user_id
-            return redirect(url_for('routes.todo_page'))
+            print("Logged in user_id:", user.user_id)  # Debug print
+
+            fullname = user.fullname
+            return redirect(url_for('auth.show_page', username= username, fullname= fullname))
 
         return "Incorrect credentials!"
 
     return render_template('index.html')
+
+@auth.route('/user/<username>', methods=['GET'])
+def show_page(username):
+    fullname = request.args.get('fullname')
+    print('This is a page for user', fullname)
+    return render_template('user.html', fullname = fullname, username=username)
+
+@auth.route('/user/<username>/monitor')
+def show_monitor(username):
+    return render_template('monitor.html')
 
 
 @auth.route('/logout')

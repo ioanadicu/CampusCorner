@@ -19,9 +19,9 @@ app.register_blueprint(auth, url_prefix='/auth')  # authentication routes use /a
 def index():
     return render_template('index.html')
 
-@app.route('/todo')
-def todo():
-    return render_template('todo.html')
+# @app.route('/todo')
+# def todo():
+#     return render_template('todo.html')
 
 
 if __name__ == '__main__':
