@@ -58,10 +58,29 @@ class CalendarRenderer:
             return 1
         else:
             raise ValueError(self._timeframe_valueerror_txt())
+
+    def get_start_date_of_display(self) -> datetime.datetime:
+        """
+        Returns a 2-tuple of the start of the range of dates shown by the calendar, and the end of the range of dates
+        shown by the calendar.
+        """
+        # TODO do for displays other than month
+        today = datetime.date.today()
+        # gets the weekday that the 1st of the month starts on
+        # which is also a diff from the start of the week
+        # monday = 0
+        # eg if below returns 3 then it's thurs and 3 day difference from week start
+        diff_from_start_of_week = datetime.date(today.year, today.month, 1).weekday()
+        # so we can get the start of the range by
+        start_of_range = datetime.date(today.year, today.month, 1) \
+                         - datetime.timedelta(days=diff_from_start_of_week)
+        # return datetime object of the start of range (which is currently just a date object)
+        return datetime.datetime(start_of_range.year, start_of_range.month, start_of_range.day)
     
     def _get_months_events(self) -> typing.List[icalendar.Event]:
         events = []
         for cal in self.app.calendars:
+            # list of icalendar Events
             for event in cal.events:
                 pass
             # TODO
