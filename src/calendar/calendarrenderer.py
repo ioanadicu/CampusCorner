@@ -2,6 +2,7 @@ import datetime
 import calendar
 import typing
 import icalendar
+import jinja2
 
 import calendarapp
 import maths_helpers
@@ -157,4 +158,7 @@ class CalendarRenderer:
         return '<table class="caltable">' + rows + '</table>'
 
     def render(self):
-        return ""  # TODO
+        env = jinja2.Environment(loader = jinja2.FileSystemLoader('templates'))
+        template = env.get_template('calendar.html')
+        return template.render(calendar_table = self.render_table())
+
