@@ -97,12 +97,13 @@ class CalendarRenderer:
         # date -> datetime
         return datetime.datetime(upper_bound.year, upper_bound.month, upper_bound.day)
     
-    def _get_months_events(self) -> typing.List[icalendar.Event]:
+    def _get_displayed_events(self) -> typing.List[icalendar.Event]:
         events = []
         for cal in self.app.calendars:
             # list of icalendar Events
             for event in cal.events:
-                if (self.get_start_date_of_display() < event.DTEND) or (event.DTSTART < self.get_end_date_of_display()):
+                if (self.get_start_date_of_display() <= event.DTEND) \
+                            and(event.DTSTART < self.get_end_date_of_display()):
                     events.append(event)
 
         return events
@@ -116,7 +117,7 @@ class CalendarRenderer:
 
         # add header
         if self.app.timeframe in (calendarapp.Timeframe.MONTH, calendarapp.Timeframe.WEEK):
-            rows += """<tr>
+            rows += """<tr class="calrow">
     <th>Mon</th>
     <th>Tue</th>
     <th>Wed</th>
@@ -126,13 +127,34 @@ class CalendarRenderer:
     <th>Sun</th>
 </tr>"""
         elif self.app.timeframe is calendarapp.Timeframe.DAY:
-            rows += f"<tr><th>{datetime.datetime.now().day}</th></tr>"
+            rows += f"<tr class=\"calrow\"><th>{datetime.datetime.now().day}</th></tr>"
 
         for row in range(self._calc_rows_needed()):
             # a string that goes betweem <tr></tr> tags
             cells = ""
             for column in range(self._get_columns_needed()):
-                pass
+                # days into the displayed timeframe
+                days_in = row * DAYS_IN_WEEK + column
+                start_of_day = self.get_start_date_of_display() + datetime.timedelta(days=days_in)
+                start_of_next_day = start_of_day + datetime.timedelta(days=1)
+
+                todays_events = []
+                for event in self._get_displayed_events():
+                    if (start_of_day <= event.DTEND) \
+                        and (start_of_next_day > event.DTSTART):
+                        todays_events.append(event)
+
+                cell_string = ""
+                cell_string += '<div class="caldate">' + str(start_of_day.day) + '</div>'
+
+                for event in todays_events:
+                    cell_string += '<div class="calevent">' + event["summary"] + '</div>'
+
+                cells += '<td class="calcell">' + cell_string + '</td>'
+
+            rows += '<tr class="calrow">' + cells + '</tr>'
+
+        return '<table class="caltable">' + rows + '</table>'
 
     def render(self):
         return ""  # TODO
