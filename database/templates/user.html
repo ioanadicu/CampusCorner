@@ -12,7 +12,7 @@
   <body>
     <h2>Welcome, {{fullname}}</h2>
     <!-- Button to open the panel -->
-    <button id="showPanelButton">Show Panel</button>
+    <button id="showPanelButton">Monitor</button>
     <button id="todoButton">To-Do</button>
     <button id="calendarButton">Calendar</button>
     <!-- The background overlay -->
@@ -24,18 +24,70 @@
     <script>
       // Get elements
       const showPanelButton = document.getElementById("showPanelButton");
+      const showToDoButton = document.getElementById("todoButton")
       const panelContainer = document.getElementById("panelContainer");
       const overlay = document.getElementById("overlay");
 
       // Show the panel when the button is clicked
-      showPanelButton.addEventListener("click", function () {
+      showPanelButton.addEventListener("click", function(){showPopUp("/auth/user/<username>/monitor");});
+
+      showToDoButton.addEventListener("click", function () {
         // Fetch the panel HTML from the Flask route
-        fetch("/auth/user/<username>/monitor")
+        loadData();
+        showPopUp("/todo")
+        
+      });
+
+      async function loadData() {
+        try {
+          let response = await fetch(`/todo/tasks`);
+          if (!response.ok) {
+            console.error("Error fetching tasks:", response.statusText);
+            return;
+          }
+          let tasks = await response.json();
+          let todoList = document.getElementById("todoList");
+          todoList.innerHTML = "";
+
+          tasks.forEach((task) => {
+            let li = document.createElement("li");
+            li.classList.toggle("completed", task.is_completed);
+
+            let checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = task.is_completed;
+            checkbox.onclick = () =>
+              toggleTaskCompletion(task.task_id, task.is_completed);
+            checkbox.classList.add("task-checkbox");
+
+            let taskText = document.createElement("span");
+            taskText.innerText = `${task.task} (Priority: ${
+              task.priority
+            }, Due: ${task.due_date || "No due date"})`;
+            taskText.classList.add("task-text");
+
+            let deleteBtn = document.createElement("button");
+            deleteBtn.innerHTML = "🗑️";
+            deleteBtn.onclick = () => deleteTask(task.task_id);
+            deleteBtn.classList.add("delete-btn");
+
+            li.appendChild(checkbox);
+            li.appendChild(taskText);
+            li.appendChild(deleteBtn);
+            todoList.appendChild(li);
+          });
+        } catch (error) {
+          console.error("Error in loadData:", error);
+        }
+      }
+
+      function showPopUp(endpoint){
+        fetch(endpoint)
           .then((response) => response.text())
           .then((data) => {
             // Inject the panel content into the container
             panelContainer.innerHTML = data;
-
+            
             // Show the panel and the overlay
             const popupPanel = document.getElementById("popupPanel");
             const closePanelButton =
@@ -59,14 +111,63 @@
           .catch((error) => {
             console.error("Error loading panel:", error);
           });
-      });
+      }
 
-      // Navigation for To-Do and Calendar pages
-      document
-        .getElementById("todoButton")
-        .addEventListener("click", function () {
-          window.location.href = "/todo";
-        });
+      // Function to add a new task
+      async function addTask() {
+        const taskText = document.getElementById("newTask").value;
+        const priority = document.getElementById("taskPriority").value;
+        const dueDate = document.getElementById("taskDueDate").value || null;
+
+        if (!taskText) {
+          alert("Task cannot be empty!");
+          return;
+        }
+
+        try {
+          let response = await fetch("/todo", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              task: taskText,
+              priority: priority,
+              due_date: dueDate,
+            }),
+          });
+          if (!response.ok) {
+            console.error("Error adding task:", response.statusText);
+          } else {
+            document.getElementById("newTask").value = "";
+            loadData();
+          }
+        } catch (error) {
+          console.error("Error in addTask:", error);
+        }
+      }
+
+      // Function to toggle task completion status
+      async function toggleTaskCompletion(taskId, isCompleted) {
+        try {
+          await fetch(`/todo/complete/${taskId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ is_completed: !isCompleted }),
+          });
+          loadData();
+        } catch (error) {
+          console.error("Error in toggleTaskCompletion:", error);
+        }
+      }
+
+      // Function to delete a task
+      async function deleteTask(taskId) {
+        try {
+          await fetch(`/todo/${taskId}`, { method: "DELETE" });
+          loadData();
+        } catch (error) {
+          console.error("Error in deleteTask:", error);
+        }
+      }
 
       document
         .getElementById("calendarButton")

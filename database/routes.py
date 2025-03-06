@@ -137,3 +137,8 @@ def add_event():
     db.session.add(new_event)
     db.session.commit()
     return jsonify({"message": "Event added successfully!"})
+
+@routes.route('/wellbeing', methods=['GET'])
+@login_required
+def wellbeing_folder():
+    return render_template('wellbeing.html')
