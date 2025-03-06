@@ -33,21 +33,10 @@ class CalendarRenderer:
         Calculate the number of rows needed, by doing arithmetic with days for a month timeframe, or returning a static
         24 * 7 for a week or day timeframe.
         """
-        now = datetime.datetime.now()
-        if self.app.timeframe is calendarapp.Timeframe.MONTH:
-            # calculate rows based on weeks
-            # get weekday the month starts on
-            monthrange = calendar.monthrange(now.year, now.month)
-            # as calendar.monthrange returns weekday start, length of month
-            # we can do this to calc how many cells are needed
-            no_of_cells = sum(monthrange) - START_OF_WEEK
-            return maths_helpers.ceildiv(no_of_cells, DAYS_IN_WEEK)
-        elif self.app.timeframe in (calendarapp.Timeframe.WEEK, calendarapp.Timeframe.DAY):
-            # one row per half hour
-            # TODO remove magic numbers
-            return 24 * 2
-        else:
-            raise ValueError(self._timeframe_valueerror_txt())
+        return maths_helpers.ceildiv(
+            (self.get_end_date_of_display() - self.get_start_date_of_display()).days,
+            DAYS_IN_WEEK
+        )
 
     def _get_columns_needed(self) -> int:
         """
@@ -113,8 +102,10 @@ class CalendarRenderer:
         for cal in self.app.calendars:
             # list of icalendar Events
             for event in cal.events:
-                pass
-            # TODO
+                if (self.get_start_date_of_display() < event.DTEND) or (event.DTSTART < self.get_end_date_of_display()):
+                    events.append(event)
+
+        return events
 
     def render_table(self) -> str:
         """
