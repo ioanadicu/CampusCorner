@@ -103,8 +103,11 @@ class CalendarRenderer:
         for cal in self.app.calendars:
             # list of icalendar Events
             for event in cal.events:
-                if (self.get_start_date_of_display() <= event.DTEND) \
-                            and(event.DTSTART < self.get_end_date_of_display()):
+                # NOTE: naive datetime instances will be assumed to represent local time
+                # get_start_date_of_display() will be naive whilst DTEND and DTSTART will have timezones
+                # TODO: possibly attempt to convert start date to same timezone as DTEND/DTSTART
+                if (self.get_start_date_of_display().timestamp() <= event.DTEND.timestamp()) \
+                            and(event.DTSTART.timestamp() < self.get_end_date_of_display().timestamp()):
                     events.append(event)
 
         return events
@@ -141,8 +144,9 @@ class CalendarRenderer:
 
                 todays_events = []
                 for event in self._get_displayed_events():
-                    if (start_of_day <= event.DTEND) \
-                        and (start_of_next_day > event.DTSTART):
+                    # see comment re: naive datetimes under _get_displayed_events()
+                    if (start_of_day.timestamp() <= event.DTEND.timestamp()) \
+                        and (start_of_next_day.timestamp() > event.DTSTART.timestamp()):
                         todays_events.append(event)
 
                 cell_string = ""
@@ -161,4 +165,3 @@ class CalendarRenderer:
         env = jinja2.Environment(loader = jinja2.FileSystemLoader('templates'))
         template = env.get_template('calendar.html')
         return template.render(calendar_table = self.render_table())
-
