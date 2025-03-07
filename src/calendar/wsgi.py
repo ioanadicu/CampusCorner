@@ -22,3 +22,5 @@ def main():
     renderer = calendarrenderer.CalendarRenderer(calendar_app)
 
     return renderer.render()
+
+app.run(debug=True)
