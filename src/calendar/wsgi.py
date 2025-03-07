@@ -19,6 +19,6 @@ def main():
     calendar_app.add_calendar_from_url(config["cal_url"])
 
     # create renderer
-    renderer = calenderrenderer.CalendarRenderer(calendar_app)
+    renderer = calendarrenderer.CalendarRenderer(calendar_app)
 
     return renderer.render()
