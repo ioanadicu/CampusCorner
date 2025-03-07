@@ -2,3 +2,5 @@
 .idea
 venv/
 src/calendar/cal_testing_config.ini
+src/calendar/__pycache__/
+
