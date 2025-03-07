@@ -1,10 +1,17 @@
 from flask import Flask
-import yaml
+import configparser
 
 import calendarapp
 import calendarrenderer
 
-CONFIG_PATH = "cal_testing_config.yaml"
+CONFIG_PATH = "cal_testing_config.ini"
+
+"""
+At the path specified by CONFIG_PATH, the WSGI expects an INI formatted as
+
+    [Settings]
+    calURL = https://an.ics.url.here/calendar.ics
+"""
 
 app = Flask(__name__)
 
@@ -14,9 +21,9 @@ def main():
     calendar_app = calendarapp.CalendarApp()
 
     # add a calendar from url from config file
-    config_file = open(CONFIG_PATH, "r")
-    config = yaml.safe_load(config_file)
-    calendar_app.add_calendar_from_url(config["cal_url"])
+    config = configparser.ConfigParser()
+    config.read(CONFIG_PATH)
+    calendar_app.add_calendar_from_url(str(config["Settings"]["calURL"]))
 
     # create renderer
     renderer = calendarrenderer.CalendarRenderer(calendar_app)

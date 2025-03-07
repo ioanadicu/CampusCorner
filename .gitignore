@@ -1,4 +1,4 @@
 .DS_Store
 .idea
 venv/
-src/calendar/cal_testing_config.yaml
+src/calendar/cal_testing_config.ini
