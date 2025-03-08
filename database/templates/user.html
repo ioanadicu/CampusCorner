@@ -1,179 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Room</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='overlay.css') }}"
-    />
-  </head>
-  <body>
-    <h2>Welcome, {{fullname}}</h2>
-    <!-- Button to open the panel -->
-    <button id="showPanelButton">Monitor</button>
-    <button id="todoButton">To-Do</button>
-    <button id="calendarButton">Calendar</button>
-    <!-- The background overlay -->
-    <div id="overlay"></div>
 
-    <!-- Container where the panel HTML will be injected -->
-    <div id="panelContainer"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Room</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='overlay.css') }}" />
 
-    <script>
-      // Get elements
-      const showPanelButton = document.getElementById("showPanelButton");
-      const showToDoButton = document.getElementById("todoButton")
-      const panelContainer = document.getElementById("panelContainer");
-      const overlay = document.getElementById("overlay");
+  <!-- Room style -->
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
 
-      // Show the panel when the button is clicked
-      showPanelButton.addEventListener("click", function(){showPopUp("/auth/user/<username>/monitor");});
+    canvas {
+      display: block;
+    }
 
-      showToDoButton.addEventListener("click", function () {
-        // Fetch the panel HTML from the Flask route
-        loadData();
-        showPopUp("/todo")
-        
-      });
+    /* Tooltip styling */
+    #tooltip {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 14px;
+      display: none;
+      pointer-events: none;
+      z-index: 1000;
+    }
+  </style>
+  <!-- End Room Style -->
+</head>
 
-      async function loadData() {
-        try {
-          let response = await fetch(`/todo/tasks`);
-          if (!response.ok) {
-            console.error("Error fetching tasks:", response.statusText);
-            return;
-          }
-          let tasks = await response.json();
-          let todoList = document.getElementById("todoList");
-          todoList.innerHTML = "";
+<body>
+  <div id="overlay"></div>
 
-          tasks.forEach((task) => {
-            let li = document.createElement("li");
-            li.classList.toggle("completed", task.is_completed);
+  <!-- Container where the panel HTML will be injected -->
+  <div id="panelContainer"></div>
 
-            let checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.checked = task.is_completed;
-            checkbox.onclick = () =>
-              toggleTaskCompletion(task.task_id, task.is_completed);
-            checkbox.classList.add("task-checkbox");
+  <!-- Room -->
+  <!-- Tooltip container -->
+  <div id="tooltip"></div>
 
-            let taskText = document.createElement("span");
-            taskText.innerText = `${task.task} (Priority: ${
-              task.priority
-            }, Due: ${task.due_date || "No due date"})`;
-            taskText.classList.add("task-text");
+  <!-- Load Three.js and Extensions -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.146/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.146/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.146/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/examples/js/postprocessing/EffectComposer.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/examples/js/postprocessing/RenderPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/examples/js/postprocessing/OutlinePass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/examples/js/shaders/CopyShader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/examples/js/postprocessing/ShaderPass.js"></script>
 
-            let deleteBtn = document.createElement("button");
-            deleteBtn.innerHTML = "🗑️";
-            deleteBtn.onclick = () => deleteTask(task.task_id);
-            deleteBtn.classList.add("delete-btn");
+  <!-- Load main.js -->
+  <script src="{{ url_for('static', filename='main.js') }}"></script>
+  <!-- End Room -->
+  <script>
+    let listen = true;
 
-            li.appendChild(checkbox);
-            li.appendChild(taskText);
-            li.appendChild(deleteBtn);
-            todoList.appendChild(li);
+    window.addEventListener("mousemove", (event) => {
+
+      // Calculate mouse position
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      // Update raycaster
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(scene.children, true);
+
+      const tooltip = document.getElementById("tooltip");
+      if (intersects.length > 0) {
+        let object = intersects[0].object;
+
+        // Traverse up the hierarchy to find a meaningful parent name
+        while (object.parent && object.parent.type !== "Scene") {
+          if (object.name) break;
+          object = object.parent;
+        }
+
+        // Display tooltip and apply highlighting
+        if (["Monitor", "Door", "Calendar"].includes(object.name)) {
+          listen = true;
+          tooltip.style.display = "block";
+          tooltip.style.left = event.clientX + 10 + "px"; // Offset from mouse
+          tooltip.style.top = event.clientY + 10 + "px";
+          tooltip.textContent = object.name;
+
+          renderer.domElement.addEventListener("click", function () {
+            //Monitor is clicked
+            if (tooltip.textContent === 'Monitor' && listen) {
+
+              console.log(tooltip.textContent);
+              listen = false;
+              showPopUp("/auth/user/<username>/monitor");
+            }
           });
-        } catch (error) {
-          console.error("Error in loadData:", error);
+          setHighlightedObject(object);
+        } else {
+          listen = false;
+          tooltip.style.display = "none";
+          setHighlightedObject(null);
         }
+      } else {
+        listen = false;
+        tooltip.style.display = "none";
+        setHighlightedObject(null);
       }
 
-      function showPopUp(endpoint){
-        fetch(endpoint)
-          .then((response) => response.text())
-          .then((data) => {
-            // Inject the panel content into the container
-            panelContainer.innerHTML = data;
-            
-            // Show the panel and the overlay
-            const popupPanel = document.getElementById("popupPanel");
-            const closePanelButton =
-              document.getElementById("closePanelButton");
+    });
 
-            popupPanel.style.display = "block";
-            overlay.style.display = "block";
 
-            // Close the panel when the close button is clicked
-            closePanelButton.addEventListener("click", function () {
-              popupPanel.style.display = "none";
-              overlay.style.display = "none";
-            });
 
-            // Close the panel when the overlay is clicked
-            overlay.addEventListener("click", function () {
-              popupPanel.style.display = "none";
-              overlay.style.display = "none";
-            });
-          })
-          .catch((error) => {
-            console.error("Error loading panel:", error);
+    function showPopUp(endpoint) {
+      listen = false;
+      fetch(endpoint)
+        .then((response) => response.text())
+        .then((data) => {
+          // Inject the panel content into the container
+          panelContainer.innerHTML = data;
+
+          // Show the panel and the overlay
+          const popupPanel = document.getElementById("popupPanel");
+          const closePanelButton =
+            document.getElementById("closePanelButton");
+
+          popupPanel.style.display = "block";
+          overlay.style.display = "block";
+
+          // Close the panel when the close button is clicked
+          closePanelButton.addEventListener("click", function () {
+            popupPanel.style.display = "none";
+            overlay.style.display = "none";
+            listen = true;
           });
-      }
 
-      // Function to add a new task
-      async function addTask() {
-        const taskText = document.getElementById("newTask").value;
-        const priority = document.getElementById("taskPriority").value;
-        const dueDate = document.getElementById("taskDueDate").value || null;
-
-        if (!taskText) {
-          alert("Task cannot be empty!");
-          return;
-        }
-
-        try {
-          let response = await fetch("/todo", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              task: taskText,
-              priority: priority,
-              due_date: dueDate,
-            }),
+          // Close the panel when the overlay is clicked
+          overlay.addEventListener("click", function () {
+            popupPanel.style.display = "none";
+            overlay.style.display = "none";
           });
-          if (!response.ok) {
-            console.error("Error adding task:", response.statusText);
-          } else {
-            document.getElementById("newTask").value = "";
-            loadData();
-          }
-        } catch (error) {
-          console.error("Error in addTask:", error);
-        }
-      }
-
-      // Function to toggle task completion status
-      async function toggleTaskCompletion(taskId, isCompleted) {
-        try {
-          await fetch(`/todo/complete/${taskId}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ is_completed: !isCompleted }),
-          });
-          loadData();
-        } catch (error) {
-          console.error("Error in toggleTaskCompletion:", error);
-        }
-      }
-
-      // Function to delete a task
-      async function deleteTask(taskId) {
-        try {
-          await fetch(`/todo/${taskId}`, { method: "DELETE" });
-          loadData();
-        } catch (error) {
-          console.error("Error in deleteTask:", error);
-        }
-      }
-
-      document
-        .getElementById("calendarButton")
-        .addEventListener("click", function () {
-          window.location.href = "/calendar";
+        })
+        .catch((error) => {
+          console.error("Error loading panel:", error);
         });
-    </script>
-  </body>
+    }
+  </script>
+</body>
+
 </html>
