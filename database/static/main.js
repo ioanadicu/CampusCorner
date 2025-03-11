@@ -32,6 +32,7 @@ controls.addEventListener('change', () => {
 });
 
 
+
 // Load the room model
 const loader = new THREE.GLTFLoader();
 let room; // Store the loaded room model

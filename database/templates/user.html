@@ -96,6 +96,13 @@
               listen = false;
               showPopUp("/auth/user/<username>/monitor");
             }
+
+            if (tooltip.textContent === 'Calendar' && listen) {
+
+              console.log(tooltip.textContent);
+              listen = false;
+              showPopUp("/calendar");
+            }
           });
           setHighlightedObject(object);
         } else {

@@ -2,7 +2,10 @@ from flask import Flask, render_template
 from config import Config
 from models import db
 from routes import routes
-from auth import auth 
+from auth import auth
+
+
+
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here' 
@@ -14,6 +17,8 @@ db.init_app(app)
 #Blueprints
 app.register_blueprint(routes)
 app.register_blueprint(auth, url_prefix='/auth')  # authentication routes use /auth
+
+
 
 @app.route('/')
 def index():

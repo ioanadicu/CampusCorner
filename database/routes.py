@@ -1,6 +1,12 @@
 from flask import Blueprint, request, jsonify, redirect, session, url_for, render_template
 from models import db, ToDo, CalendarEvent
 
+
+import configparser
+
+import calendarapp
+import calendarrenderer
+
 # Blueprint for routes
 routes = Blueprint("routes", __name__)
 
@@ -101,11 +107,21 @@ def update_task(task_id):
 # ========================
 # 📅 Calendar Routes (Moved to calendar.html)
 # ========================
+CONFIG_PATH = "cal_testing_config.ini"
 
 @routes.route('/calendar', methods=['GET'])
 @login_required
 def calendar_page():
-    return render_template('calendar.html')
+    calendar_app = calendarapp.CalendarApp()
+
+    # add a calendar from url from config file
+    config = configparser.ConfigParser()
+    config.read(CONFIG_PATH)
+    calendar_app.add_calendar_from_url(str(config["Settings"]["calURL"]))
+
+        # create renderer
+    renderer = calendarrenderer.CalendarRenderer(calendar_app)
+    return renderer.render()
 
 @routes.route('/calendar/events', methods=['GET'])
 @login_required
