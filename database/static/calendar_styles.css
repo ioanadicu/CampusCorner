@@ -1,0 +1,145 @@
+/* Import a retro, pixelated font if available (uncomment if using Google Fonts)
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+*/
+
+/* Global reset and body styling */
+* {
+    box-sizing: border-box;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    /* Lighter background gradient */
+    background: linear-gradient(135deg, #f7e9d2, #e8d8c3);
+    color: #3b1a10;
+    font-family: 'Press Start 2P', sans-serif;
+    font-size: 16px;
+  }
+  
+  /* Calendar Table */
+  .caltable {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px auto;
+    font-size: 16px;
+    text-align: center;
+    background-color: #fffaf2;  /* very light beige for readability */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    table-layout: fixed; /* Ensures fixed widths for all columns */
+  }
+  
+  /* Header Row - days of week */
+  .calrow th {
+    background: #d4a373;  /* solid, warm brownish tone */
+    padding: 15px;
+    border: 1px solid #b8860b;
+    color: #3b1a10;
+    /* Remove hover effects so the color stays constant */
+  }
+  
+  /* Remove header hover transition (or you can leave it static) */
+  /* .calrow th:hover { background: #d4a373; } */
+  
+  /* Calendar Cells */
+  .calcell {
+    padding: 10px;
+    vertical-align: top;
+    border: 1px solid #b8860b;
+    height: 150px;
+    position: relative;
+    background: #faf3e0;  /* light beige */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+    width: calc(100% / 7);  /* Divide equally among 7 days */
+  }
+  
+  .calcell:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Date display inside each cell */
+  .caldate {
+    font-weight: bold;
+    margin-bottom: 5px;
+    background: rgba(0, 0, 0, 0.15);
+    padding: 3px 5px;
+    border-radius: 3px;
+    display: inline-block;
+    color: #3b1a10;
+    /* Minimizing text-shadow for better legibility */
+  }
+  
+  /* Event styling - solid color that darkens on hover */
+  .calevent {
+    background-color: #d4a373;
+    border: 2px solid #b8860b;
+    padding: 4px 8px;
+    margin: 3px 0;
+    border-radius: 3px;
+    font-size: 14px;
+    color: #3b1a10;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;     /* Prevent wrapping */
+    overflow: hidden;        /* Hide text overflow */
+    text-overflow: ellipsis; /* Display ellipsis (...) for overflow */
+  }
+  
+  .calevent:hover {
+    background-color: #b8860b;
+  }
+  
+  /* Table Rows */
+  .calrow {
+    animation: fadeIn 1s ease-out;
+  }
+  
+  /* Keyframes for fade-in effect */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .calcell {
+      height: 120px;
+      padding: 5px;
+    }
+    
+    .calrow th {
+      padding: 10px;
+      font-size: 12px;
+    }
+  }
+  
+  /* Panel for calendar and button styling */
+  #popupPanel {
+    margin: 30px auto;
+    width: 95%;
+    max-width: 1400px;  /* Increased maximum width */
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+    border: 3px solid #b8860b;
+  }
+  
+  
+  #closePanelButton {
+    background: #d4a373;
+    color: #3b1a10;
+    font-family: 'Press Start 2P', sans-serif;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    /* Minimized text-shadow for clarity */
+    transition: background 0.3s ease;
+    margin-top: 10px;
+  }
+  
+  #closePanelButton:hover {
+    background: #b8860b;
+  }
