@@ -16,6 +16,7 @@ def get_authentication_url(command):
 def is_csticket_matching_session():
     print(request.args.get("csticket"))
     print(session.get("csticket"))
+    print('go to uom')
     return request.args.get("csticket") == session.get("csticket")
 
 
@@ -23,6 +24,7 @@ def is_csticket_matching_session():
 def register():
     csticket = str(uuid.uuid4())
     session["csticket"] = csticket
+    print('register')
     return redirect(get_authentication_url("validate"))
 
 
