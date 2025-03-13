@@ -58,6 +58,7 @@ loader.load("/static/new_bedroom.glb", (gltf) => {
     // new components
     const todo = room.getObjectByName('Todo');
     const shelf = room.getObjectByName('Shelf');
+    const cat = room.getObjectByName('Cat');
 
 
     if (monitor) console.log('Monitor found!');
@@ -65,8 +66,9 @@ loader.load("/static/new_bedroom.glb", (gltf) => {
     if (calendar) console.log('Calendar found!');
     if (todo) console.log('Todo found!');
     if (shelf) console.log('Shelf found!');
+    if (cat) console.log('Cat found!');
 
-    if (!monitor || !door || !calendar || !todo || !shelf) {
+    if (!monitor || !door || !calendar || !todo || !shelf || !cat) {
         console.error('One or more objects not found. Check object names in Blender.');
     }
 }, undefined, (error) => {
