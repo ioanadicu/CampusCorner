@@ -119,8 +119,9 @@ def calendar_page():
     config.read(CONFIG_PATH)
     calendar_app.add_calendar_from_url(str(config["Settings"]["calURL"]))
 
-        # create renderer
     renderer = calendarrenderer.CalendarRenderer(calendar_app)
+    month_offset = int(request.args.get("month_offset", 0))
+    renderer.month_offset = month_offset
     return renderer.render()
 
 @routes.route('/calendar/events', methods=['GET'])
