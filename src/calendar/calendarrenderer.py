@@ -18,10 +18,36 @@ class CalendarRenderer:
     """
     Class representing an instance of the calendar app which can render the CalendarApp as HTML. The .render() method
     returns HTML as a string.
+
+    attributes
+    ==========
+    - `app` = a `CalendarApp` which can be rendered
+    - `_now` = defaults to None and represents a faux-"now" as a quick hack to display other months/weeks/etc. Do not
+               access or set directly—see below instead
+
+    The `now` property
+    ==================
+    A CalendarRenderer has a property `.now` which represents a fixed point around which to display the calendar. By
+    default, this calls `datetime.datetime.now()`, but you can set it to any datetime:
+    ```py
+    calendar_app.now = datetime.datetime(2022, 01, 01)
+    ```
+    To access this fixed point, also use `.now`. Generally, you should be using the `.now` property any time you would
+    ordinarily call `datetime.datetime.now()`, and use `.now.date()` where you would normally call
+    `datetime.date.today()`
     """
 
-    def __init__(self, app: calendarapp.CalendarApp):
+    def __init__(self, app: calendarapp.CalendarApp, *, now: datetime.datetime = None):
         self.app = app
+        self._now = now
+
+    @property
+    def now(self):
+        return self._now if self._now else datetime.datetime.now()
+
+    @now.setter
+    def now(self, value: datetime.datetime):
+        self._now = value
 
     def _timeframe_valueerror_txt(self) -> str:
         """
@@ -57,7 +83,7 @@ class CalendarRenderer:
         Return a datetime object representing the start of the time period displayed by the calendar
         """
         # TODO do for displays other than month
-        today = datetime.date.today()
+        today = self.now.date()
         # gets the weekday that the 1st of the month starts on
         # which is also a diff from the start of the week
         # monday = 0
@@ -74,7 +100,7 @@ class CalendarRenderer:
         Return a datetime object representing the end of the time period displayed on the calendar
         """
         # similar logic to start date, see above comments
-        today = datetime.date.today()
+        today = self.now.date()
         # we find the difference between the end of the month and the start of next week
         # eg weekday() gives us 3 (thursday)
         # we do 7 - 3 = 4 as there's 4 days difference between thurs and start of next week
@@ -131,7 +157,7 @@ class CalendarRenderer:
     <th>Sun</th>
 </tr>"""
         elif self.app.timeframe is calendarapp.Timeframe.DAY:
-            rows += f"<tr class=\"calrow\"><th>{datetime.datetime.now().day}</th></tr>"
+            rows += f"<tr class=\"calrow\"><th>{self.now.day}</th></tr>"
 
         for row in range(self._calc_rows_needed()):
             # a string that goes betweem <tr></tr> tags
