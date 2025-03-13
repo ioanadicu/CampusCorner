@@ -38,7 +38,7 @@ const loader = new THREE.GLTFLoader();
 let room; // Store the loaded room model
 
 
-loader.load("/static/Bedroom102.glb", (gltf) => {
+loader.load("/static/new_bedroom.glb", (gltf) => {
     console.log("Model Loaded Successfully!", gltf.scene);
     room = gltf.scene;
     scene.add(room);
@@ -54,11 +54,19 @@ loader.load("/static/Bedroom102.glb", (gltf) => {
     const monitor = room.getObjectByName('Monitor');
     const door = room.getObjectByName('Door');
     const calendar = room.getObjectByName('Calendar');
+    
+    // new components
+    const todo = room.getObjectByName('Todo');
+    const shelf = room.getObjectByName('Shelf');
+
+
     if (monitor) console.log('Monitor found!');
     if (door) console.log('Door found!');
     if (calendar) console.log('Calendar found!');
+    if (todo) console.log('Todo found!');
+    if (shelf) console.log('Shelf found!');
 
-    if (!monitor || !door || !calendar) {
+    if (!monitor || !door || !calendar || !todo || !shelf) {
         console.error('One or more objects not found. Check object names in Blender.');
     }
 }, undefined, (error) => {

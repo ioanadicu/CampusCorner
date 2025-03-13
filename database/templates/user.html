@@ -56,6 +56,7 @@
 
   <!-- Load main.js -->
   <script src="{{ url_for('static', filename='main.js') }}"></script>
+  <script src="{{ url_for('static', filename='todo.js') }}"></script>
   <!-- End Room -->
   <script>
     let listen = true;
@@ -81,7 +82,7 @@
         }
 
         // Display tooltip and apply highlighting
-        if (["Monitor", "Door", "Calendar"].includes(object.name)) {
+        if (["Monitor", "Door", "Calendar", "Todo", "Shelf"].includes(object.name)) {
           listen = true;
           tooltip.style.display = "block";
           tooltip.style.left = event.clientX + 10 + "px"; // Offset from mouse
@@ -102,6 +103,14 @@
               console.log(tooltip.textContent);
               listen = false;
               showPopUp("/calendar");
+            }
+
+            if (tooltip.textContent === 'Todo' && listen) {
+
+              console.log(tooltip.textContent);
+              listen = false;
+              loadData();
+              showPopUp("/todo")
             }
           });
           setHighlightedObject(object);
