@@ -1,0 +1,108 @@
+/* Global Styles */
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Press Start 2P', cursive;
+    background: url('Background.jpg') no-repeat center center/cover;
+    color: #372b20;
+  }
+  
+  /* Login Container Styles */
+  .login-container {
+    width: 400px;
+    height: 300px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #3e2615;
+    border: 3px solid #6b4022;
+    border-radius: 12px;
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.6), inset 0px 0px 8px rgba(141, 110, 99, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .login-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #e0b87f;
+    font-size: 20px;
+  }
+  
+  /* Input Field Styles */.login-container input[type="password"] {
+    width: 250px;
+    height: 35px;
+    margin-bottom: 15px;
+    padding: 5px 10px;
+    border: 2px solid #6b4022;
+    border-radius: 5px;
+    background-color: #2b1b10;
+    box-shadow: inset 2px 2px 6px rgba(141, 110, 99, 0.4);
+    font-size: 14px;
+    font-weight: 600;
+    color: #e0b87f;
+    text-align: center;}
+  .login-container input[type="password"]:focus {
+      outline: none;
+      border-color: #6b4022;
+      box-shadow: inset 2px 2px 6px rgba(141, 110, 99, 0.4);
+    }
+  
+    /* Button Styles */
+    .login-container button[type="submit"] {
+      width: 150px;
+      height: 50px;
+      border-radius: 8px;
+      border: 2px solid #6b4022;
+      background-color: #5a3a1e;
+      box-shadow: 0px 4px 10px rgba(141, 110, 99, 0.6);
+      font-family: 'Press Start 2P', cursive;
+      font-size: 16px;
+      font-weight: 600;
+      color: #f5d9b1;
+      cursor: pointer;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  
+    .login-container button[type="submit"]:hover {
+      background-color: #c49a6c;
+      color: #2b1d12;
+      box-shadow: 0px 0px 20px rgba(255, 217, 156, 0.8);
+      transform: translateY(-2px);
+    }
+  
+    /* Error Message Styles /*
+    .error {
+      color: #f00;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+  
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .login-container {
+        width: 90%;
+        height: 80vh;
+      }
+    }
+  
+    @media (max-width: 480px) {
+      .login-container {
+        width: 100%;
+        height: 80vh;
+      }
+    }

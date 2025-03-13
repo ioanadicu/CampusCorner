@@ -14,6 +14,8 @@ def get_authentication_url(command):
 
 
 def is_csticket_matching_session():
+    print(request.args.get("csticket"))
+    print(session.get("csticket"))
     return request.args.get("csticket") == session.get("csticket")
 
 
