@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Task Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='todo_styles.css') }}" />
   </head>
   <body>
     <div class="container" id="popupPanel">
+      <div id="todo_container">
+        <div class="todo-content">
       <h1>Your To-Do List</h1>
       <ul id="todoList"></ul>
 
@@ -20,6 +23,8 @@
         <input type="date" id="taskDueDate" />
         <button onclick="addTask()">Add Task</button>
         <button id="closePanelButton">Close</button>
+      </div>
+      </div>
       </div>
     </div>
   </body>
