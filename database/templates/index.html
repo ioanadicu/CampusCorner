@@ -4,20 +4,39 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-        <form action = "{{url_for('auth.login')}}" method = "post">    <div class="login-container">
-        <h1 class="pixel-text">Login</h1>
-        <form id="loginForm">
-            <input type="text" id="username", name = 'username', placeholder="Username" required>
-            <input type="password" id="password", name = 'password' placeholder="Password" required>
-            <!-- Split buttons into two: Login and Register -->
-            <div class="button-container">
-                <button type="submit" class="login-btn">Login</a></button>
-                <button type="button" class="register-btn"><a href="{{ url_for('auth.register') }}">Register</a></button>
+        <form action = "{{url_for('auth.login')}}" method = "post">    
+            <div class="welcome-message">
+                <h1>Welcome to Campus Corner</h1>
             </div>
-
-        </form>
-        <p id="errorMessage" class="error"></p>
-    </div>
+            <div class="wrapper">
+                <div class="card-switch">
+                    <label class="switch">
+                        <span class="login-text">Login</span>
+                        <input type="checkbox" class="toggle" id="toggle-switch" />
+                        <span class="slider"></span>
+                        <span class="signup-text">Sign up</span>
+                    </label>
+                    <!-- Flip card container -->
+                    <div class="flip-card__inner" id="flip-card">
+                        <div class="flip-card__front">
+                            <div class="title">Login</div>
+                            <form class="flip-card__form" action="">
+                                <input class="flip-card__input" name="username" placeholder="Username" type="username" required />
+                                <input class="flip-card__input" name="password" placeholder="Password" type="password" required />
+                                <button class="flip-card__btn">Let's go!</button>
+                            </form>
+                        </div>
+                        <div class="flip-card__back">
+                            <div class="title">Register</div>
+                            <form class="flip-card__form" action="">
+                                <button class="flip-card__btn"><a href="{{ url_for('auth.register') }}"></a>UOM Portal</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
 </form>
+<script src="/static/script.js"></script>
 </body>
 </html>
