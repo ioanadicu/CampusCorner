@@ -159,3 +159,8 @@ def add_event():
 @login_required
 def wellbeing_folder():
     return render_template('wellbeing.html')
+
+@routes.route('/event', methods=['GET'])
+@login_required
+def event_description():
+    return render_template('event.html')

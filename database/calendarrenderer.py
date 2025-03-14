@@ -148,9 +148,14 @@ class CalendarRenderer:
 
                 cell_string = ""
                 cell_string += '<div class="caldate">' + str(start_of_day.day) + '</div>'
-
+                
                 for event in todays_events:
-                    cell_string += '<div class="calevent">' + event["summary"] + '</div>'
+                    event_data = event['description'].split('\n')
+                    event_type = event_data[0]
+                    event_location = event_data[2]
+                    event_subject = event_data[1].split(': ')[1]
+                    cell_string += '<div class="calevent" onclick="viewEvent(\'' + event_subject.replace("'", "\\'")+ ',' + event_type.replace("'", "\\'") + ',' + event_location.replace("'", "\\'")+ '\')">' + event_subject + '</div>'
+                    
 
                 cells += '<td class="calcell">' + cell_string + '</td>'
 
