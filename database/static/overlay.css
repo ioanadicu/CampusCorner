@@ -1,0 +1,116 @@
+/* Overlay styling */
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+  display: none; /* Hidden by default */
+  z-index: 999; /* Behind the panel */
+}
+
+/* Panel styling */
+#popupPanel {
+  position: fixed;
+  top: 50%; /* Center the panel vertically */
+  left: 50%; /* Center the panel horizontally */
+  transform: translate(-50%, -50%); /* Adjust to truly center the panel */
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex; /* Hidden by default */
+  z-index: 1000; /* On top of the overlay */
+  width: 70%; /* 70% of the browser's width */
+  height: 70%; /* 70% of the browser's height */
+  max-width: 800px; /* Optional: Maximum width, e.g., 800px */
+  max-height: 80vh; /* Optional: Maximum height, e.g., 80% of the viewport height */
+  overflow-y: auto; /* Enable scrolling if content overflows */
+  
+  justify-content: space-between;
+}
+
+#catPanel{
+  position: fixed;
+  top: 50%; /* Center the panel vertically */
+  left: 60%; /* Center the panel horizontally */
+  transform: translate(-50%, -50%); /* Adjust to truly center the panel */
+  background-color: white;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: none; /* Hidden by default */
+  z-index: 1000; /* On top of the overlay */
+  width: 20%; /* 70% of the browser's width */
+  height: 20%; /* 70% of the browser's height */
+  max-width: 800px; /* Optional: Maximum width, e.g., 800px */
+  max-height: 80vh; /* Optional: Maximum height, e.g., 80% of the viewport height */
+  overflow-y: auto; /* Enable scrolling if content overflows */
+  
+  justify-content: space-between;
+}
+
+#scoreContainer{
+  position: fixed;
+  top: 5%; /* Center the panel vertically */
+  left: 90%; /* Center the panel horizontally */
+  transform: translate(-50%, -50%); /* Adjust to truly center the panel */
+  background-color: white;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: block; /* Hidden by default */
+  z-index: 1000; /* On top of the overlay */
+  width: 15%; /* 70% of the browser's width */
+  height: 5%; /* 70% of the browser's height */
+  max-width: 800px; /* Optional: Maximum width, e.g., 800px */
+  max-height: 80vh; /* Optional: Maximum height, e.g., 80% of the viewport height */
+  overflow-y: auto; /* Enable scrolling if content overflows */
+  
+  justify-content: space-between;
+}
+.right-column {
+  width: 30%; /* 30% width for the right column */
+  background-color: #f4f4f4;
+  padding: 20px;
+  box-sizing: border-box;
+  height: 100%; /* Full height of the popup */
+  position: sticky;
+  top: 0;
+  overflow-y: auto; /* Make it scrollable if necessary */
+  display: block; /* Initially visible */
+}
+
+.left-column {
+  width: 70%; /* The remaining space for the left column */
+  height: 100%;
+  padding: 20px;
+  overflow-y: auto; /* Scrollable content */
+}
+
+.food-container {
+  display: flex;  /* Use flexbox layout */
+  gap: 10px;      /* Add space between the buttons */
+}
+
+.food-container button {
+  padding: 10px 20px; /* Optional: add some padding to the buttons */
+}
+
+/* Close button styling */
+#closePanelButton {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#closePanelButton:hover {
+  background-color: #d32f2f;
+}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wellbeing Support</title>
+  <link rel="stylesheet" href="/static/calendar_styles.css">
+</head>
+
+<body>
+  <div id="popupPanel">
+    <h1>Wellbeing Support</h1>
+
+    <button
+      onclick="window.location.href='https://outlook.office365.com/book/CounsellingandMentalHealthService@live.manchester.ac.uk/'">
+      Book Mental Health Service Appointment
+    </button>
+    <button onclick="window.location.href='https://www.counsellingservice.manchester.ac.uk/selfhelp/'">
+      Podcasts
+    </button>
+    <button onclick="window.location.href='https://www.counsellingservice.manchester.ac.uk/get-help/'">
+      Get Help
+    </button>
+    <button id="back" onclick='showPopUp("/auth/user/<username>/monitor")'>
+      Back
+    </button>
+    <button id="closePanelButton">Close</button>
+  </div>
+</body>
+
+</html>
