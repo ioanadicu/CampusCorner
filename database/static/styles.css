@@ -18,6 +18,16 @@ body {
   flex-direction: column; /* Ensures elements stack vertically */
 }
 
+form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%; /* Allow the form to take full width */
+  max-width: 600px; /* Add a max width if needed */
+  padding: 20px;
+}
+
 /* Welcome message styling */
 .welcome-message {
   text-align: center;

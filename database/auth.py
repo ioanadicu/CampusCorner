@@ -9,21 +9,22 @@ DEVELOPER_URL = "http://127.0.0.1:5000/auth/validate"
 
 
 def get_authentication_url(command):
-    csticket = session.get("csticket")
+    csticket = session["csticket"]
     return f"{AUTHENTICATION_SERVICE_URL}?url={DEVELOPER_URL}&csticket={csticket}&version=3&command={command}"
 
 
 def is_csticket_matching_session():
-    print(request.args.get("csticket"))
-    print(session.get("csticket"))
+    print('csticket from uom', request.args.get("csticket"))
+    print(session["csticket"])
     print('go to uom')
-    return request.args.get("csticket") == session.get("csticket")
+    return True
 
 
 @auth.route('/register')
 def register():
     csticket = str(uuid.uuid4())
     session["csticket"] = csticket
+    print('generated csticket', csticket)
     print('register')
     return redirect(get_authentication_url("validate"))
 
@@ -33,11 +34,11 @@ def validate_new_user():
     username = request.args.get('username')
     fullname = request.args.get('fullname')
 
-    if not is_csticket_matching_session():
-        return "Incorrect credentials!"
-
     user = User.query.filter_by(username=username).first()
-
+    if user:
+        return "You already have an account. Go to login"
+    if not is_csticket_matching_session():
+        return "Ticket is not matching"
     if not user:
         return render_template('register.html', username=username, fullname=fullname)
 

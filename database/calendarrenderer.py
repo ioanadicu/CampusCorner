@@ -19,8 +19,17 @@ class CalendarRenderer:
     returns HTML as a string.
     """
 
-    def __init__(self, app: calendarapp.CalendarApp):
+    def __init__(self, app: calendarapp.CalendarApp, *, now: datetime.datetime = None):
         self.app = app
+        self._now = now
+
+    @property
+    def now(self):
+        return self._now if self._now else datetime.datetime.now()
+
+    @now.setter
+    def now(self, value: datetime.datetime):
+        self._now = value
 
     def _timeframe_valueerror_txt(self) -> str:
         """
@@ -34,7 +43,6 @@ class CalendarRenderer:
         24 * 7 for a week or day timeframe.
         """
         return -((self.get_end_date_of_display() - self.get_start_date_of_display()).days//-DAYS_IN_WEEK)
-        
 
     def _get_columns_needed(self) -> int:
         """
@@ -54,7 +62,7 @@ class CalendarRenderer:
         Return a datetime object representing the start of the time period displayed by the calendar
         """
         # TODO do for displays other than month
-        today = datetime.date.today()
+        today = self.now.date()
         # gets the weekday that the 1st of the month starts on
         # which is also a diff from the start of the week
         # monday = 0
@@ -71,7 +79,7 @@ class CalendarRenderer:
         Return a datetime object representing the end of the time period displayed on the calendar
         """
         # similar logic to start date, see above comments
-        today = datetime.date.today()
+        today = self.now.date()
         # we find the difference between the end of the month and the start of next week
         # eg weekday() gives us 3 (thursday)
         # we do 7 - 3 = 4 as there's 4 days difference between thurs and start of next week
@@ -108,6 +116,7 @@ class CalendarRenderer:
                     events.append(event)
 
         return events
+
 
     def render_table(self) -> str:
         """

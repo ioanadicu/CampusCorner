@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AR.js A-Frame</title>
+<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+<!-- Assumes AR.js build is in the 'AR.js' directory -->
+<script type='text/javascript' src='../static/ar-threex-location-only.js'></script>
+<script type='text/javascript' src='../static/aframe-ar.js'></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <style>
+    /* Style for the text above the camera frame */
+    #fixed-text {
+      position: absolute;
+      top: 20px; /* Adjust this to your desired vertical position */
+      left: 50%;
+      transform: translateX(-50%);
+      color: white;
+      font-size: 32px;
+      font-family: Arial, sans-serif;
+      z-index: 10; /* Ensures the text is above the AR content */
+    }
+    #console {
+      position: absolute;
+      top: 40px; /* Adjust this to your desired vertical position */
+      left: 50%;
+      transform: translateX(-50%);
+      color: red;
+      font-size: 32px;
+      font-family: Arial, sans-serif;
+      z-index: 12; /* Ensures the text is above the AR content */
+    }
+        #arrow {
+            position: absolute;
+            top: 100px;  /* Adjust vertical position */
+            left: 50%;
+            transform-origin: center center; /* Ensures the arrow rotates around its center */
+            width: 50px;  /* Adjust width */
+            height: 50px;  /* Adjust height */
+            z-index: 11; /* Make sure the arrow is above the AR content */
+            transition: transform 0.1s ease-in-out; /* Smooth transition for rotation */
+        }
+
+        /* Simple arrow image or CSS shape */
+        #arrow::before {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 100%;
+            background-color: red; /* Make it a simple red triangle */
+            clip-path: polygon(50% 0%, 100% 100%, 0% 100%); /* This creates a triangle shape */
+        }
+    </style>
+</head>
+<body>
+    <a-scene vr-mode-ui='enabled: false' arjs='sourceType: webcam; videoTexture: true; debugUIEnabled: false' renderer='antialias: true; alpha: true'>
+    	<a-camera look-controls-enabled='false' arjs-device-orientation-controls='smoothingFactor:0.2; enableHeadingControls: false' gps-new-camera='gpsMinDistance: 1;'></a-camera>
+    	<a-entity material='color: red' geometry='primitive: box' gps-new-entity-place="{{coords}}" scale="10 10 10" id="cube"></a-entity>
+    	<a-text id = 'name' value="{{name}}" color="green" rotation="0 0 0" scale="40 40 40" gps-new-entity-place="{{coords}}"></a-text>
+    </a-scene>
+
+
+</body>
+</html>

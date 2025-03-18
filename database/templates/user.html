@@ -40,6 +40,9 @@
   <!-- Container where the panel HTML will be injected -->
   <div id="panelContainer"></div>
 
+  <div id="scoreContainer">
+    <div id="score">Score</div>
+  </div>
   <!-- Room -->
   <!-- Tooltip container -->
   <div id="tooltip"></div>
@@ -58,10 +61,12 @@
   <script src="{{ url_for('static', filename='main.js') }}"></script>
   <script src="{{ url_for('static', filename='todo.js') }}"></script>
   <script src="{{ url_for('static', filename='view_event.js') }}"></script>
+  <script src="{{ url_for('static', filename='calendar_click.js') }}"></script>
   <!-- End Room -->
   <script>
     let listen = true;
-
+    const scoreContainer = document.getElementById("scoreContainer");
+    loadScore();
     window.addEventListener("mousemove", (event) => {
 
       // Calculate mouse position
@@ -113,6 +118,18 @@
               loadData();
               showPopUp("/todo")
             }
+
+            if (tooltip.textContent === 'Cat' && listen) {
+              console.log(tooltip.textContent);
+              listen = false;
+              showPopUp("/cat")
+              }
+
+              if (tooltip.textContent === 'Door' && listen) {
+              console.log(tooltip.textContent);
+              listen = false;
+              window.location.href = '/navigation';
+              }
           });
           setHighlightedObject(object);
         } else {
@@ -132,6 +149,12 @@
 
     function showPopUp(endpoint) {
       listen = false;
+      if(endpoint === "/add_calendar"){
+        endpoint = "/add_calendar?new_calendar=" + document.getElementById("cal_link").value;
+      }
+      if(endpoint === "back" || endpoint === "forward"){
+        endpoint = "/change_month?direction=" + endpoint;
+      }
       fetch(endpoint)
         .then((response) => response.text())
         .then((data) => {
@@ -142,26 +165,63 @@
           const popupPanel = document.getElementById("popupPanel");
           const closePanelButton =
             document.getElementById("closePanelButton");
-
-          popupPanel.style.display = "block";
+          
+          if(endpoint.includes("calendar") || endpoint.includes("month")){
+            popupPanel.style.display = "flex";
+          }
+          else{
+            if(popupPanel){
+              popupPanel.style.display = "block";
+            }
+          }
           overlay.style.display = "block";
-
+          if(endpoint === '/cat'){
+            const catPanel = document.getElementById("catPanel");
+            catPanel.style.display = "block";
+            overlay.style.backgroundColor = "transparent";
+          }
           // Close the panel when the close button is clicked
+          if(closePanelButton){
           closePanelButton.addEventListener("click", function () {
             popupPanel.style.display = "none";
             overlay.style.display = "none";
             listen = true;
           });
+        }
 
           // Close the panel when the overlay is clicked
           overlay.addEventListener("click", function () {
+            if(popupPanel){
             popupPanel.style.display = "none";
+            }
             overlay.style.display = "none";
+            if(catPanel){
+              catPanel.style.display = "none";
+            }
           });
         })
         .catch((error) => {
           console.error("Error loading panel:", error);
         });
+    }
+
+    function loadScore(){
+      fetch("/score")
+      .then((response) => response.text())
+      .then((data) => {
+        console.log(data);
+        scoreContainer.textContent = scoreContainer.textContent + data;
+
+      });
+    }
+
+    function feedCat(food){
+      fetch(`/feed_cat?food=${food}`)
+      .then(response => response.text())
+      .then((data) => {
+        console.log(data);
+        scoreContainer.textContent = "Score: " + data;
+      })
     }
   </script>
 </body>

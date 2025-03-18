@@ -127,7 +127,7 @@
   }
   
   
-  #closePanelButton {
+  button {
     background: #d4a373;
     color: #3b1a10;
     font-family: 'Press Start 2P', sans-serif;
@@ -140,6 +140,6 @@
     margin-top: 10px;
   }
   
-  #closePanelButton:hover {
+button:hover {
     background: #b8860b;
   }

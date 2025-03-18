@@ -1,3 +1,4 @@
+import secrets
 from flask import Flask, render_template
 from config import Config
 from models import db
@@ -8,7 +9,7 @@ from auth import auth
 
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key_here' 
+app.secret_key = secrets.token_hex(32)  
 app.config.from_object(Config)
 
 # Initialize the database
@@ -24,12 +25,9 @@ app.register_blueprint(auth, url_prefix='/auth')  # authentication routes use /a
 def index():
     return render_template('index.html')
 
-# @app.route('/todo')
-# def todo():
-#     return render_template('todo.html')
 
 
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

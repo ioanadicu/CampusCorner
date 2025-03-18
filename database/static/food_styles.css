@@ -1,0 +1,63 @@
+#popupPanel {
+    margin: 30px auto;
+    width: 95%;
+    max-width: 1400px;  /* Increased maximum width */
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+    border: 3px solid #b8860b;
+  }
+
+
+  
+  .food-container {
+    display: flex;
+    flex-direction: row; /* changed from column */
+    gap: 20px;
+  }
+  
+  /* New style for title above buttons */
+  .title {
+    font-size: 2em;
+    text-align: center;
+    margin-bottom: 20px;
+    order: -1; /* added to ensure title appears above the buttons */
+    font-family: monospace; /* updated for monospace style */
+  }
+  
+  button {
+    position: relative;
+    background-color: #3E2723; /* changed from #8B4513 */
+    color: #F5DEB3;
+    border: none;
+    padding: 10px 15px 10px 70px; /* modified padding for smaller buttons */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: block;        
+    align-items: center; 
+    justify-content: center;
+  }
+  
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0,0,0,0.4);
+  }
+  
+  /* Add icons for the specific buttons */
+/* Add icons for the specific buttons */
+button#Milk {
+    background-image: url('milk.png');
+    background-repeat: no-repeat;
+    background-position: 15px center;
+    background-size: 20px 20px; /* modified to make image smaller */
+  }
+  
+  button#Fish {
+    background-image: url('fish-food.png');
+    background-repeat: no-repeat;
+    background-position: 15px center;
+    background-size: 20px 20px; /* modified to make image smaller */
+  } 
