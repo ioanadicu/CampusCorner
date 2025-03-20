@@ -14,17 +14,18 @@ def get_authentication_url(command):
 
 
 def is_csticket_matching_session():
-    print('csticket from uom', request.args.get("csticket"))
+    csticket = request.args.get("csticket")
+    print('ticket from uom', csticket)
     print(session["csticket"])
     print('go to uom')
-    return True
+    return session["csticket"] == csticket
 
 
 @auth.route('/register')
 def register():
     csticket = str(uuid.uuid4())
     session["csticket"] = csticket
-    print('generated csticket', csticket)
+    print('generated csticket', session["csticket"])
     print('register')
     return redirect(get_authentication_url("validate"))
 
@@ -33,7 +34,7 @@ def register():
 def validate_new_user():
     username = request.args.get('username')
     fullname = request.args.get('fullname')
-
+    print(session)
     user = User.query.filter_by(username=username).first()
     if user:
         return "You already have an account. Go to login"

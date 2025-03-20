@@ -163,7 +163,9 @@ class CalendarRenderer:
                     event_type = event_data[0]
                     event_location = event_data[2]
                     event_subject = event_data[1].split(': ')[1]
-                    cell_string += '<div class="calevent" onclick="viewEvent(\'' + event_subject.replace("'", "\\'")+ ',' + event_type.replace("'", "\\'") + ',' + event_location.replace("'", "\\'")+ '\')">' + event_subject + '</div>'
+                    event_time = 'Time: ' + event.DTSTART.strftime('%H:%M') + ' - ' + event.DTEND.strftime('%H:%M')
+                    print(event_time)
+                    cell_string += '<div class="calevent" onclick="viewEvent(\'' + event_subject.replace("'", "\\'")+ ',' + event_type.replace("'", "\\'") + ',' + event_location.replace("'", "\\'")+ ',' + event_time + '\')">' + event_subject + '</div>'
                     
 
                 cells += '<td class="calcell">' + cell_string + '</td>'

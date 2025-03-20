@@ -6,6 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Room</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='overlay.css') }}" />
+  <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='todo_styles2.css') }}"
+    />
 
   <!-- Room style -->
   <style>
@@ -38,11 +42,46 @@
   <div id="overlay"></div>
 
   <!-- Container where the panel HTML will be injected -->
-  <div id="panelContainer"></div>
+  <div id="panelContainer">
+    <div id="todo-container">
+      <div class="todo-content">
+        <span id="close-todo">&times;</span>
+        <!-- Close button -->
+  
+        <!-- 📌 User Header (Shows Name & Points) -->
+        <div id="user-header">
+          <h2>Welcome, <span id="userFullName">{{ fullname }}</span></h2>
+          <h3 id="user-points">🏆 Points: <span id="userPoints">0</span></h3>
+        </div>
+  
+        <div class="container">
+          <!-- 📌 Sidebar (Categories & Tags) -->
+          <aside class="sidebar">
+            <h2>Categories</h2>
+            <div class="category" data-category="today">Today</div>
+            <div class="category" data-category="upcoming">Upcoming</div>
+            <div class="category" data-category="viewAll">View All</div>
+  
+            <!-- 📌 Custom Tags Section -->
+            <div class="custom-categories">
+              <h3 id="tag-dropdown-header">Tags ▼</h3>
+              <div id="custom-category-list"></div>
+            </div>
+          </aside>
+  
+          <!-- 📌 Main Content Area -->
+          <main class="content" id="content"></main>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div id="scoreContainer">
     <div id="score">Score</div>
   </div>
+
+  
+
   <!-- Room -->
   <!-- Tooltip container -->
   <div id="tooltip"></div>
@@ -59,7 +98,7 @@
 
   <!-- Load main.js -->
   <script src="{{ url_for('static', filename='main.js') }}"></script>
-  <script src="{{ url_for('static', filename='todo.js') }}"></script>
+  <script src="{{ url_for('static', filename='todo2.js') }}"></script>
   <script src="{{ url_for('static', filename='view_event.js') }}"></script>
   <script src="{{ url_for('static', filename='calendar_click.js') }}"></script>
   <!-- End Room -->
@@ -67,6 +106,25 @@
     let listen = true;
     const scoreContainer = document.getElementById("scoreContainer");
     loadScore();
+
+    const todoContainer = document.getElementById("todo-container");
+  const closeTodoBtn = document.getElementById("close-todo");
+
+ overlay.addEventListener("click", function () {
+  if(todoContainer){
+  todoContainer.style.display = "none";
+  }
+  overlay.style.display = "none";
+});
+
+
+  closeTodoBtn.addEventListener("click", function () {
+    todoContainer.style.display = "none"; // ✅ Hide with animation
+    console.log("close todo");
+    listen = true;
+  });
+
+
     window.addEventListener("mousemove", (event) => {
 
       // Calculate mouse position
@@ -112,11 +170,13 @@
             }
 
             if (tooltip.textContent === 'Todo' && listen) {
-
+              const todoContainer = document.getElementById("todo-container");
               console.log(tooltip.textContent);
               listen = false;
-              loadData();
-              showPopUp("/todo")
+              todoContainer.style.display="flex";
+              //loadData();
+              //showPopUp("/todo")
+              //startToDo();
             }
 
             if (tooltip.textContent === 'Cat' && listen) {
@@ -159,8 +219,19 @@
         .then((response) => response.text())
         .then((data) => {
           // Inject the panel content into the container
-          panelContainer.innerHTML = data;
-
+          //panelContainer.innerHTML = panelContainer.innerHTML+data;
+          let injectedContent = document.getElementById("removable");
+          if(!injectedContent){
+            injectedContent = document.createElement('div');
+            injectedContent.id = "removable";
+            injectedContent.innerHTML = data;
+            panelContainer.appendChild(injectedContent);
+          }
+          else{
+            injectedContent.innerHTML = data;
+          }
+          
+          
           // Show the panel and the overlay
           const popupPanel = document.getElementById("popupPanel");
           const closePanelButton =
@@ -186,18 +257,22 @@
             popupPanel.style.display = "none";
             overlay.style.display = "none";
             listen = true;
+            panelContainer.removeChild(injectedContent);
           });
         }
 
           // Close the panel when the overlay is clicked
           overlay.addEventListener("click", function () {
+            panelContainer.removeChild(injectedContent);
             if(popupPanel){
             popupPanel.style.display = "none";
             }
             overlay.style.display = "none";
-            if(catPanel){
-              catPanel.style.display = "none";
-            }
+            if(endpoint === '/cat'){
+            const catPanel = document.getElementById("catPanel");
+            catPanel.style.display = "none";
+          }
+            
           });
         })
         .catch((error) => {

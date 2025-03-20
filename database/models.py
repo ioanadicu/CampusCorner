@@ -23,14 +23,13 @@ class User(db.Model):
 # ====================
 class ToDo(db.Model):
     __tablename__ = 'todo'
-
     task_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)  # FK
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     task = db.Column(db.Text, nullable=False)
     is_completed = db.Column(db.Boolean, default=False)
     due_date = db.Column(db.Date, nullable=True)
-    priority = db.Column(db.String(10), nullable=False, default="Medium")  # "Low", "Medium", "High"
-
+    priority = db.Column(db.String(10), nullable=False, default="Medium")
+    tag = db.Column(db.String(50), nullable=True)  # ✅ New column
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 # ====================

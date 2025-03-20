@@ -14,7 +14,7 @@ def generate_token(user_id):
 # Generate a URL containing the token
 def generate_qr_code_url(user_id):
     token = generate_token(user_id)
-    url = f"https://2613-130-88-226-14.ngrok-free.app/scan?token={token}"  # Replace with your actual URL
+    url = f"https://ae8a-130-88-226-25.ngrok-free.app/scan?token={token}"  # Replace with your actual URL
     return url
 
 # Generate QR Code

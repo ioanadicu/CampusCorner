@@ -8,7 +8,7 @@ function viewEvent(description) {
             let event_properties = description.split(",");
             const descriptionElement = document.getElementById("description");
             // Now, update the pop-up description and show the pop-up
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < 4; i++) {
                 const newDiv = document.createElement("div");
                 // Set some content for the new div
                 newDiv.textContent = event_properties[i];

@@ -1,7 +1,7 @@
-import datetime
+from datetime import datetime, date
 import math
 from flask import Blueprint, make_response, request, jsonify, redirect, session, url_for, render_template
-from models import db, ToDo, CalendarEvent
+from models import User, db, ToDo, CalendarEvent
 import re
 import itsdangerous
 import configparser
@@ -31,15 +31,12 @@ def check_referrer(referer):
 # To-Do List
 # ========================
 
-# Serve the To-Do page (renders todo.html)
 @routes.route('/todo', methods=['GET'])
 @login_required
 def todo_page():
-    referer = request.headers.get('Referer')
-    if check_referrer(referer):
-        return render_template('todo.html')
-    return "You can't access this page", 403
-    
+    fullname=session.get("fullname","User")
+    print(fullname)
+    return render_template('todo.html',fullname=fullname)
 
 # Get all tasks for the logged-in user
 @routes.route('/todo/tasks', methods=['GET'])
@@ -47,6 +44,7 @@ def todo_page():
 def get_todo_tasks():
     user_id = session.get("user_id")
     print("User ID for fetching tasks:", user_id)  # Debug print
+
     if not user_id:
         return jsonify({"error": "Unauthorized"}), 401
 
@@ -54,6 +52,7 @@ def get_todo_tasks():
     return jsonify([{
         "task_id": task.task_id,
         "task": task.task,
+        "tag":task.tag,
         "is_completed": task.is_completed,
         "priority": task.priority,
         "due_date": task.due_date.strftime("%Y-%m-%d") if task.due_date else None
@@ -61,20 +60,36 @@ def get_todo_tasks():
 
 
 # Add a new task
-@routes.route('/todo', methods=['POST'])
+@routes.route("/todo", methods=["POST"])
 @login_required
 def add_task():
-    user_id = session["user_id"]  
-    data = request.json
+    user_id = session.get("user_id")
+    data = request.get_json()
+
+    task_name = data.get("task", "").strip()  # Get task input
+    tag = data.get("tag", "").strip()  # ✅ Get tag from JSON directly
+    due_date = data.get("due_date", None)  # Get due date
+    priority = data.get("priority", "Medium")  # Get priority
+
+    print(f"📌 Extracted - Task: '{task_name}', Tag: '{tag}'")  # ✅ Debugging
+
+    # Convert due date to correct format
+    due_date = datetime.strptime(due_date, "%Y-%m-%d") if due_date else None
+
     new_task = ToDo(
         user_id=user_id,
-        task=data['task'],
-        priority=data.get('priority', 'Medium'),
-        due_date=data.get('due_date')
+        task=task_name,
+        tag=tag if tag else None,  # ✅ Ensure empty tag is stored as NULL, not empty string
+        due_date=due_date,
+        priority=priority,
+        is_completed=False
     )
+
     db.session.add(new_task)
     db.session.commit()
-    return jsonify({"message": "Task added successfully!"})
+
+    return jsonify({"message": "Task added successfully", "task_id": new_task.task_id}), 201
+
 
 # Delete a task
 @routes.route('/todo/<int:task_id>', methods=['DELETE'])
@@ -94,12 +109,24 @@ def delete_task(task_id):
 def complete_task(task_id):
     user_id = session["user_id"]
     task = ToDo.query.filter_by(task_id=task_id, user_id=user_id).first()
-    if not task:
+    user= User.query.get(user_id)
+    
+    if not task or not user:
         return jsonify({"message": "Task not found or unauthorized"}), 404
-    data = request.json
-    task.is_completed = data.get("is_completed", not task.is_completed)
+    
+    task.is_completed =  not task.is_completed
+    
+    # Assigning points
+    
+    points_dict = {"Low":5,"Medium":10,"High":20}
+    
+    if task.is_completed:
+        user.points += points_dict.get(task.priority,0) #add points
+    else:
+        user.points -= points_dict.get(task.priority,0) #subtract points
+    
     db.session.commit()
-    return jsonify({"message": "Task completion status updated!"})
+    return jsonify({"message": "Task completion updated!", "user_points": user.points})
 
 # Edit a task
 @routes.route('/todo/<int:task_id>', methods=['PUT'])
@@ -143,9 +170,9 @@ def calendar_page():
             renderer = calendarrenderer.CalendarRenderer(calendar_app)
             month_offset = int(request.args.get("month_offset", 0))
             renderer.month_offset = month_offset
-            today = datetime.date.today()
+            today = date.today()
             print('month', today.month + CAL_OFFSET[1])
-            renderer.now = datetime.datetime(today.year + CAL_OFFSET[0], today.month + CAL_OFFSET[1], today.day)
+            renderer.now = datetime(today.year + CAL_OFFSET[0], today.month + CAL_OFFSET[1], today.day)
             return renderer.render()
         
         #if there are no calendars render an empty calendar
@@ -170,7 +197,7 @@ def change_month():
         global CAL_OFFSET
         direction = request.args.get('direction')
         print('direction: ', direction)
-        today = datetime.date.today()
+        today = date.today()
         if direction == 'forward':
             if today.month + CAL_OFFSET[1] == 12:
                 CAL_OFFSET[0] += 1
@@ -355,11 +382,13 @@ def determine_direction(initial_lat, initial_lon, building, compass_angle):
 
     # Normalize the compass heading
     compass_angle = compass_angle % 360
-
+    if 0<=compass_angle<45 or -45<compass_angle<0:
+        return 'correct'
     # Determine relative direction
     angle_diff = (bearing_to_destination - compass_angle + 360) % 360
 
     # Check the direction (left, right, forward, or back)
+    print(compass_angle, angle_diff)
     if 45 <= angle_diff < 135:
         return "right"
     elif 135 <= angle_diff < 225:

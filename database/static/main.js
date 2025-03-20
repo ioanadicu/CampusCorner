@@ -38,7 +38,7 @@ const loader = new THREE.GLTFLoader();
 let room; // Store the loaded room model
 
 
-loader.load("/static/new_bedroom.glb", (gltf) => {
+loader.load("/static/Bedroom211.glb", (gltf) => {
     console.log("Model Loaded Successfully!", gltf.scene);
     room = gltf.scene;
     scene.add(room);

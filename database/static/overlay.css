@@ -31,6 +31,26 @@
   justify-content: space-between;
 }
 
+#todo-container {
+  position: fixed;
+  top: 50%; /* Center the panel vertically */
+  left: 50%; /* Center the panel horizontally */
+  transform: translate(-50%, -50%); /* Adjust to truly center the panel */
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: none; /* Hidden by default */
+  z-index: 1000; /* On top of the overlay */
+  width: 70%; /* 70% of the browser's width */
+  height: 70%; /* 70% of the browser's height */
+  max-width: 800px; /* Optional: Maximum width, e.g., 800px */
+  max-height: 80vh; /* Optional: Maximum height, e.g., 80% of the viewport height */
+  overflow-y: auto; /* Enable scrolling if content overflows */
+  
+  justify-content: space-between;
+}
+
 #catPanel{
   position: fixed;
   top: 50%; /* Center the panel vertically */
