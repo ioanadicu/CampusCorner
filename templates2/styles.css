@@ -1,0 +1,224 @@
+/* Reset default margin and padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Center the entire page */
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Press Start 2P', cursive;
+    background: url('Background.jpg') no-repeat center center/cover;
+    color: #372b20 ;
+    flex-direction: column; /* Ensures elements stack vertically */
+  }
+  
+  /* Welcome message styling */
+  .welcome-message {
+    text-align: center;
+    margin-bottom: 20px; /* Space between the welcome text and the rest of the content */
+  }
+  
+  .welcome-message h1 {
+    font-size: 75px;
+    color: #e6c28b;
+    text-shadow: 
+      -2px -2px 0 #000,
+      2px -2px 0 #000,
+      -2px 2px 0 #000,
+      2px 2px 0 #000,
+      0px -2px 0 #000,
+      -2px 0px 0 #000,
+      2px 0px 0 #000,
+      0px 2px 0 #000;
+    -webkit-text-stroke: 2px #6b4022; /* Add stroke to the text */
+  }
+  
+  /* Wrapper to contain the flip-card */
+  .wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 420px;
+  }
+  
+  /* Switch container and labels */
+  .switch {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  
+  .switch-labels {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .switch-label {
+    font-size: 12px;
+    color: #e6c28b;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  /* Hide the default checkbox */
+  .toggle {
+    display: none;
+  }
+  
+  /* Slider (toggle switch) */
+  .slider {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+    background-color: #5a3822;
+    border-radius: 34px;
+    cursor: pointer;
+    transition: background-color 0.4s ease-in-out;
+    box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.5);
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 2px;
+    bottom: 2px;
+    background-color: #e6c28b;
+    border-radius: 50%;
+    transition: transform 0.4s ease-in-out;
+  }
+  
+  .toggle:checked + .slider {
+    background-color: #c49a6c;
+  }
+  
+  .toggle:checked + .slider:before {
+    transform: translateX(30px);
+  }
+  
+  /* Active state for labels */
+  .toggle:checked ~ .switch-labels .switch-label:last-child {
+    color: #ffffff;
+  }
+  
+  .toggle:not(:checked) ~ .switch-labels .switch-label:first-child {
+    color: #ffffff;
+  }
+  
+  /* Flip card container */
+  .flip-card__inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 500px;
+    height: 250px;
+    position: relative;
+    perspective: 1000px;
+    text-align: center;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+    margin-top: 20px;
+  }
+  
+  /* Flip effect */
+  .flipped {
+    transform: rotateY(180deg);
+  }
+  
+  /* Front and Back of the Flip Card */
+  .flip-card__front,
+  .flip-card__back {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #3e2615;
+    gap: 20px;
+    padding: 20px;
+    border-radius: 12px;
+    border: 3px solid #6b4022;
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.6), inset 0px 0px 8px rgba(141, 110, 99, 0.3);
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+  }
+  
+  .flip-card__back {
+    transform: rotateY(180deg);
+  }
+  
+  /* Title */
+  .title {
+    font-size: 22px;
+    font-weight: 900;
+    text-align: center;
+    color: #e0b87f;
+    text-shadow: 2px 2px 6px rgba(246, 208, 133, 0.9);
+  }
+  
+  /* Form container */
+  .flip-card__form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    gap: 15px;
+  }
+  
+  /* Input field styling */
+  .flip-card__input {
+    width: 260px;
+    height: 40px;
+    border-radius: 5px;
+    border: 2px solid #6b4022;
+    background-color: #2b1b10;
+    box-shadow: inset 2px 2px 6px rgba(141, 110, 99, 0.4);
+    font-size: 14px;
+    font-weight: 600;
+    color: #e0b87f;
+    padding: 5px 10px;
+    outline: none;
+    text-align: center;
+  }
+  
+  /* Button styling */
+  .flip-card__btn {
+    width: 130px;
+    font-family: 'Press Start 2P', cursive;
+    height: 40px;
+    border-radius: 8px;
+    border: 2px solid #6b4022;
+    background-color: #5a3a1e;
+    box-shadow: 0px 4px 10px rgba(141, 110, 99, 0.6);
+    font-size: 11px;
+    font-weight: 600;
+    color: #f5d9b1;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    margin-top: 5px;
+  }
+  
+  /* Button hover effect */
+  .flip-card__btn:hover {
+    background-color: #c49a6c;
+    color: #2b1d12;
+    box-shadow: 0px 0px 20px rgba(255, 217, 156, 0.8);
+    transform: translateY(-2px);
+  }
