@@ -26,9 +26,10 @@ class CalendarApp:
     """
     DEFAULT_TIMEFRAME = Timeframe.MONTH
 
-    def __init__(self, calendars: typing.List[icalendar.Calendar]):
+    def __init__(self, calendars: typing.List[icalendar.Calendar] = None):
         self.timeframe = CalendarApp.DEFAULT_TIMEFRAME
-        self.calendars = calendars
+        # will set self.calendars to [] if calendars is None/unset
+        self.calendars = calendars or []
 
     def add_calendar_from_url(self, url: str):
         """
