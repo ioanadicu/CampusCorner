@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wellbeing Support</title>
+  <link rel="stylesheet" href="/static/monitor_styles.css">
+</head>
+
+<body>
+  <div id="popupPanel">
+    
+
+    <div class="button-container">
+      <img src="{{ url_for('static', filename='diary.png') }}" alt="Blackboard Icon" class="button-icon" onclick="window.location.href='https://outlook.office365.com/book/CounsellingandMentalHealthService@live.manchester.ac.uk/'">
+    <button
+      onclick="window.location.href='https://outlook.office365.com/book/CounsellingandMentalHealthService@live.manchester.ac.uk/'">
+      Book Mental Health Service Appointment
+    </button>
+  </div>
+
+  <div class="button-container">
+    <img src="{{ url_for('static', filename='crown.png') }}" alt="Blackboard Icon" class="button-icon" onclick="window.location.href='https://www.counsellingservice.manchester.ac.uk/selfhelp/'">
+    <button onclick="window.location.href='https://www.counsellingservice.manchester.ac.uk/selfhelp/'">
+      Podcasts
+    </button></div>
+
+    <div class="button-container">
+      <img src="{{ url_for('static', filename='calendar.png') }}" alt="Blackboard Icon" class="button-icon" onclick="window.location.href='https://www.counsellingservice.manchester.ac.uk/get-help/'">
+    <button onclick="window.location.href='https://www.counsellingservice.manchester.ac.uk/get-help/'">
+      Get Help
+    </button></div>
+
+    <div class="button-container">
+      <img src="{{ url_for('static', filename='dancing.png') }}" alt="Blackboard Icon" class="button-icon" onclick='showPopUp("/auth/user/<username>/monitor")'>
+    <button id="back" onclick='showPopUp("/auth/user/<username>/monitor")'>
+      Back
+    </button></div>
+
+    <div class="button-container">
+      <img src="{{ url_for('static', filename='website.png') }}" alt="Blackboard Icon" class="button-icon" id="closePanelButton">
+  </div>
+</div>
+</body>
+
+</html>

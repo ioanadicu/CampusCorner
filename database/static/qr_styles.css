@@ -1,0 +1,50 @@
+body {
+    background: linear-gradient(135deg, #3E2723, #4E342E); /* stronger browns */
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+    font-family: 'Courier New', Courier, monospace;
+    color: #F5DEB3;
+    margin: 0;
+    padding: 20px;
+  }
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  }
+  
+  img {
+    display: block;
+    margin: 20px auto;
+    border: 3px solid #F5DEB3;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    transition: transform 0.3s;
+  }
+  
+  img:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Extra gamey-inspired effect for future interactive elements */
+  button {
+    background-color: #A0522D;
+    color: #F5DEB3;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s, transform 0.2s;
+  }
+  
+  button:hover {
+    background-color: #8B4513;
+  
+    transform: translateY(-2px);
+  }

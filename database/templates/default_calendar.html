@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calendar</title>
+    <link rel="stylesheet" href="/static/calendar_styles.css">
+  </head>
+  <body>
+    <div id="popupPanel">
+      <div class="left-column">
+        <table class="caltable">
+            <tbody>
+                <tr class="calrow">
+            <th>Mon</th>
+            <th>Tue</th>
+            <th>Wed</th>
+            <th>Thu</th>
+            <th>Fri</th>
+            <th>Sat</th>
+            <th>Sun</th>
+        </tr>
+        <tr class="calrow"><td class="calcell"></td><td class="calcell"></td><td class="calcell"></td><td class="calcell"></td>
+            <td class="calcell"></td><td class="calcell"></td><td class="calcell"></td></tr>
+
+            <tr class="calrow"><td class="calcell"></td><td class="calcell"></td><td class="calcell"></td><td class="calcell"></td>
+                <td class="calcell"></td><td class="calcell"></td><td class="calcell"></td></tr>
+
+                <tr class="calrow"><td class="calcell"></td><td class="calcell"></td><td class="calcell"></td><td class="calcell"></td>
+                    <td class="calcell"></td><td class="calcell"></td><td class="calcell"></td></tr>
+            </tbody>   
+        </table>
+      <button id="closePanelButton">Close</button>
+    </div>
+    <div id="event-container" class="right-column" style="display: block;">
+      <div id="event-info"></div>
+      <label for="cal_link">Calendar Link</label>
+      <br />
+      <input type="text" name="cal_link" id="cal_link"/>
+      <br />
+      <button type="submit" onclick="showPopUp('/add_calendar')">Submit</button>
+    </div>
+    </div>
+  </body>
+</html>

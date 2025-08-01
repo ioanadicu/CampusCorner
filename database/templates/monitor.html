@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monitor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='monitor_styles.css') }}" />
+</head>
+
+<body>
+  <div id="popupPanel">
+
+    <div class="button-container">
+      <img src="{{ url_for('static', filename='diary.png') }}" alt="Blackboard Icon" class="button-icon" onclick="window.location.href='https://online.manchester.ac.uk/'">
+      <button onclick="window.location.href='https://online.manchester.ac.uk/'">
+        Blackboard
+      </button>
+    </div>
+
+    <div class="button-container">
+      <img src="{{ url_for('static', filename='crown.png') }}" alt="SPOT Icon" class="button-icon" onclick="window.location.href='https://studentnet.cs.manchester.ac.uk/me/spotv2/spotv2.php'">
+      <button onclick="window.location.href='https://studentnet.cs.manchester.ac.uk/me/spotv2/spotv2.php'">
+        SPOT
+      </button>
+    </div>
+
+    <div class="button-container">
+      <img src="{{ url_for('static', filename='calendar.png') }}" alt="Study Space Icon" class="button-icon" onclick="window.location.href='https://resourcebooker.manchester.ac.uk/'">
+      <button onclick="window.location.href='https://resourcebooker.manchester.ac.uk/'">
+        Study Space
+      </button>
+    </div>
+
+    <div class="button-container">
+      <img src="{{ url_for('static', filename='dancing.png') }}" alt="Wellbeing Icon" class="button-icon" onclick='showPopUp("/wellbeing")'>
+      <button onclick='showPopUp("/wellbeing")'>Wellbeing</button>
+    </div>
+
+    <!-- Close Icon -->
+    <div class="close-container">
+      <img src="{{ url_for('static', filename='website.png') }}" alt="Close Icon" class="close-icon" id="closePanelButton">
+    </div>
+
+  </div>
+</html>

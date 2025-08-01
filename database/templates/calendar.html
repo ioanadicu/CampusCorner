@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+    <link rel="stylesheet" href="/static/calendar_styles.css"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calendar</title>
+  </head>
+  <body>
+    <div id="popupPanel">
+      <div class="left-column">
+      {{ calendar_table }}
+      <button id="closePanelButton">Close</button>
+    </div>
+    <div id="event-container" class="right-column" style="display: block;">
+      <div id="event-info"></div>
+      <label for="cal_link">Calendar Link</label>
+      <br />
+      <input type="text" name="cal_link" id="cal_link"/>
+      <br />
+      <button type="submit">Submit</button>
+      <button onclick="showPopUp('back')">Previous</button>
+      <button onclick="showPopUp('forward')">Next</button>
+    </div>
+    </div>
+  </body>
+</html>
