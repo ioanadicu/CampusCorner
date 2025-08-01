@@ -1,0 +1,8 @@
+.DS_Store
+database/__pycache__
+database/cal_testing_config.ini
+.idea
+venv/
+src/calendar/cal_testing_config.ini
+src/calendar/__pycache__/
+

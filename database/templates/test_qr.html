@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Choose a UoM Building</title>
+  <style>
+    /* Ensure html and body fill the viewport */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Body styling with flexbox to center content vertically & horizontally */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f5f2eb;
+      font-family: Arial, sans-serif;
+      color: #4b3621;
+      background-size: cover;
+      background-position: center;
+      transition: background-image 0.5s ease-in-out;
+    }
+
+    /* Style the form container */
+    form {
+      background-color: rgba(255, 250, 240, 0.95);
+      border: 1px solid #d2b48c;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    /* Style the label */
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1.1em;
+    }
+
+    /* Style the dropdown */
+    select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #d2b48c;
+      border-radius: 4px;
+      background: #fff;
+      font-size: 1em;
+      color: #4b3621;
+      margin-bottom: 20px;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='10'%20height='10'%3E%3Cpolygon%20points='0,0%205,5%2010,0'%20style='fill:%20%234b3621;'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 10px;
+    }
+
+    /* Style the button */
+    button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      background-color: #8b4513;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #a0522d;
+    }
+  </style>
+</head>
+<body>
+  <form action="{{ url_for('routes.show_building') }}" method="post" id="buildingForm">
+    <label for="building">Choose a UoM Building</label>
+    <select id="building" name="building">
+      <option value="">Select a building</option>
+      <option value="Kilburn">Kilburn Building</option>
+      <option value="Engineering">Engineering Building</option>
+      <option value="Simon">Simon Building</option>
+      <option value="Library">Main Library</option>
+      <option value="Woolton">Woolton Hall</option>
+    </select>
+    <input type="hidden" id="lat" name="lat">
+    <input type="hidden" id="lon" name="lon">
+    <input type="hidden" id="angle" name="angle">
+    <button type="submit">Go</button>
+  </form>
+
+  <script>
+    // Map each building to its background image URL
+    const backgrounds = {
+      "Kilburn": "{{ url_for('static', filename='images/kilburn.jpeg') }}",
+      "Engineering": "{{ url_for('static', filename='images/engineering.jpeg') }}",
+      "Simon": "{{ url_for('static', filename='images/simon.jpeg') }}",
+      "Library": "{{ url_for('static', filename='images/library.jpeg') }}",
+      "Woolton": "{{ url_for('static', filename='images/woolton.jpeg') }}"
+    };
+
+    // Update the background when the selection changes
+    document.getElementById("building").addEventListener("change", function() {
+      const selectedBuilding = this.value;
+      if(backgrounds[selectedBuilding]) {
+        document.body.style.backgroundImage = "url('" + backgrounds[selectedBuilding] + "')";
+      } else {
+        // If no valid selection, clear the background image
+        document.body.style.backgroundImage = "";
+      }
+    });
+
+    let heading = 0;
+    let initLat = 0;
+    let initLon = 0;
+    window.addEventListener('deviceorientation', function(e) {
+    heading = e.webkitCompassHeading;
+    heading = (heading + 360) % 360;
+    });
+
+if ("geolocation" in navigator) {
+    navigator.geolocation.watchPosition(function(position) {
+        initLat = position.coords.latitude;
+        initLon = position.coords.longitude;
+    }, function(error) {
+        console.error("Error occurred. Error code: " + error.code);
+    });
+} else {
+    console.log("Geolocation is not supported by this browser.");
+}
+
+    function calculateValues() {
+    document.getElementById('angle').value = heading;
+    document.getElementById('lat').value = initLat;
+    document.getElementById('lon').value = initLon;
+}
+
+
+
+// Call this function when you're ready to submit the form (e.g., when the user clicks "Go")
+document.getElementById('buildingForm').onsubmit = function() {
+    calculateValues();
+};
+  </script>
+</body>
+</html>
+
+
+    
+
+

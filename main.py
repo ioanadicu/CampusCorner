@@ -3,6 +3,7 @@ import time
 from flask import Flask, session, request, redirect, render_template
 import requests
 
+
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'  # Replace with your actual secret key
 
@@ -12,16 +13,10 @@ AUTHENTICATION_SERVICE_URL = "http://studentnet.cs.manchester.ac.uk/authenticate
 AUTHENTICATION_LOGOUT_URL = "http://studentnet.cs.manchester.ac.uk/systemlogout.php"
 users = {}
 
-
- 
-
-    
 def get_authentication_url(command):
     csticket = session.get("csticket")
     url = f"{AUTHENTICATION_SERVICE_URL}?url={DEVELOPER_URL}&csticket={csticket}&version=3&command={command}"
     return url
-
-
   
 def get_username():
     print(session)
@@ -89,10 +84,6 @@ def save_new_user(username):
 def show_page(username, fullname):
     print(users)
     return f'Hello {fullname} !'
-
-
-
-
 
 
 if __name__ == '__main__':
